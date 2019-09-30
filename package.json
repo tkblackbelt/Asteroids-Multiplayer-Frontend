@@ -1,0 +1,44 @@
+{
+  "name": "Asteroids-Multiplayer-Frontend",
+  "version": "1.0.0",
+  "description": "Web Asteroids Clone with online multi-player and match making",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "webpack-dashboard -- webpack-dev-server src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tkblackbelt/Asteroids-Multiplayer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tkblackbelt/Asteroids-Multiplayer/issues"
+  },
+  "homepage": "https://github.com/tkblackbelt/Asteroids-Multiplayer#readme",
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.6.2",
+    "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/types": "^7.6.1",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^3.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "prop-types": "^15.7.2",
+    "style-loader": "^1.0.0",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9",
+    "webpack-dashboard": "^3.2.0"
+  },
+  "dependencies": {
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1",
+    "react-is": "^16.10.1",
+    "webpack-dev-server": "^3.8.1"
+  }
+}

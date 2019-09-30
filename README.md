@@ -1,4 +1,4 @@
-# Asteroids-Multiplayer
+# Asteroids-Multiplayer-Frontend
 
 Web Asteroids Clone with online multi-player and match making
 
@@ -35,8 +35,6 @@ WIP
 * [React](https://reactjs.org/) - The frontend components
 * [HTML5 Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) - Game Animations
 * [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) - Frontend Game Logic
-* [Python](https://www.python.org/) - Backend Game Logic
-* [AWS](https://aws.amazon.com/?nc2=h_lg) - Backend Infrastructure
 
 ## Contributing
 
