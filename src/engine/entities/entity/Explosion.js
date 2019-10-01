@@ -22,6 +22,15 @@ class Explosion extends Entity {
     update(screenWidth: Number, screenHeight: Number) {
         super.update(screenWidth, screenHeight);
         this.particles.forEach(p => p.update(screenWidth, screenHeight));
+        this.particles = this.particles.filter(p => !p.shouldRemoveFromScreen());
+    }
+
+    shouldRemoveFromScreen(): boolean {
+        return this.hasParticles();
+    }
+
+    hasParticles(): boolean {
+        return this.particles.length > 0;
     }
 
     draw(ctx: CanvasRenderingContext2D): void {

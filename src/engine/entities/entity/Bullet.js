@@ -10,7 +10,9 @@ class Bullet extends Entity {
     }
 
     shouldRemoveFromScreen(): boolean {
-        return !this.isInsideScreen() || this.usedUp;
+        const isNotInScreen = !this.isInsideScreen();
+
+        return isNotInScreen || this.usedUp;
     }
 
     setUsedUp(): void {

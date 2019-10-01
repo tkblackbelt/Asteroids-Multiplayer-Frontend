@@ -8,31 +8,51 @@ import {ConstantPhysics} from "../../math/Physics";
  */
 class Asteroid extends Entity {
 
-    constructor({x, y, angle, sides, size, velocity, rotationSpeed}) {
+    constructor({x, y, angle, sides, size, velocity, rotationSpeed, lives}) {
         super(x, y, ConstantPhysics(velocity, angle, rotationSpeed));
         this.sides = sides;
         this.radius = size;
         this.color = getRandomColor();
         this.explosion = null;
         this.exploding = false;
-        this.exploded = false;
+        this.lives = lives;
     }
 
     update(screenWidth: Number, screenHeight: Number) {
         super.update(screenWidth, screenHeight);
 
-
-        if (this.exploding) {
+        if (this.isExploding()) {
             this.explosion.update(screenWidth, screenHeight);
         } else {
-            this.angle += this.rotationSpeed;
             this.wrapPositionWithinBoundary(0, screenWidth, 0, screenHeight);
         }
     }
 
-    explode(): void {
+    explode(): [Asteroid] {
         this.explosion = generateExplosion(this.position.x, this.position.y);
         this.exploding = true;
+        return this.generateChildAsteroids();
+    }
+
+    generateChildAsteroids(): [Asteroid] {
+        const asteroids = [];
+        for(let i = 0; i < numberBetween(0, this.lives); i++) {
+            const asteroid = generateAsteroid(this.position.x, this.position.y);
+            asteroid.position = this.position;
+            asteroid.lives = this.lives - 1;
+            asteroid.radius = this.radius / 2;
+
+            asteroids.push(asteroid);
+        }
+        return asteroids;
+    }
+
+    isExploding(): boolean {
+        return this.exploding;
+    }
+
+    shouldRemoveFromScreen(): boolean {
+        return this.isExploding() && !this.explosion.hasParticles();
     }
 
     draw(ctx: CanvasRenderingContext2D) {
@@ -75,7 +95,8 @@ export const generateAsteroid = (maxX, maxY) => {
             sides: 6,
             size: numberBetween(20, 80),
             velocity: numberBetween(1, 4),
-            rotationSpeed: numberBetween(0, 0.1)
+            rotationSpeed: numberBetween(0, 0.1),
+            lives: numberBetween(1, 4)
         }
     )
 };

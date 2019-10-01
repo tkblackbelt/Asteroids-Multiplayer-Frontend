@@ -17,7 +17,7 @@ class Particle extends Entity {
     }
 
     shouldRemoveFromScreen(): boolean {
-        return !this.hasVelocity()
+        return !this.hasVelocity() || !this.isInsideScreen();
     }
 
     draw(ctx: CanvasRenderingContext2D): void {

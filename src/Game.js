@@ -2,7 +2,7 @@ import React from 'react';
 import InputManager from "./engine/manager/InputManager";
 import Background from "./engine/entities/entity/Background";
 import Player from "./engine/entities/entity/Player";
-import {generateAsteroidField} from "./engine/entities/entity/Asteroid";
+import Asteroid, {generateAsteroidField} from "./engine/entities/entity/Asteroid";
 import Stats from "./components/GameStats/Stats";
 
 
@@ -37,7 +37,7 @@ class Game extends React.Component {
     initializeGameLoop = () => {
         this.setState({
             running: true,
-            asteroids: generateAsteroidField(1, 500, 500)
+            asteroids: generateAsteroidField(10, 500, 500)
         });
         this.gameLoop();
     };
@@ -48,6 +48,7 @@ class Game extends React.Component {
         if (this.isGameRunning()) {
             this.processInputs();
             this.processUpdates();
+            this.removeDeadEntities();
             this.checkCollisions();
             this.drawScreen();
         }
@@ -85,22 +86,46 @@ class Game extends React.Component {
         background.update(screenWidth, screenHeight);
         player.update(screenWidth, screenHeight);
         asteroids.forEach(e => e.update(screenWidth, screenHeight));
+        console.log(asteroids.length);
+    };
+
+    removeDeadEntities = () => {
+        const {asteroids} = this.state;
+
+        const asteroidsLeft = asteroids.filter(a => !a.shouldRemoveFromScreen());
+
+        if (asteroidsLeft.length !== asteroids.length) {
+            this.setState({
+                asteroids: asteroidsLeft
+            })
+        }
     };
 
     checkCollisions = () => {
         const {asteroids, player} = this.state;
 
-        asteroids.forEach(asteroid => {
-            if (asteroid.isTouching(player)) {
-                player.die();
-            }
-
-            player.bullets.forEach(bullet => {
-                if (bullet.isTouching(asteroid)) {
-                    asteroid.explode();
-                    bullet.setUsedUp();
+        asteroids
+            .filter(a => !a.isExploding())
+            .forEach(asteroid => {
+                if (asteroid.isTouching(player)) {
+                    player.die();
                 }
-            })
+
+                player.bullets.forEach(bullet => {
+                    if (bullet.isTouching(asteroid)) {
+                        bullet.setUsedUp();
+
+                        const newAsteroids = asteroid.explode();
+                        this.addNewAsteroids(newAsteroids);
+                    }
+                })
+            });
+    };
+
+    addNewAsteroids = (newAsteroids: [Asteroid]) => {
+        const {asteroids} = this.state;
+        this.setState({
+            asteroids: newAsteroids.concat(asteroids)
         });
     };
 
