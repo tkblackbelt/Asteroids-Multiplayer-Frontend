@@ -5,9 +5,9 @@ import {NoPhysics} from "../../math/Physics";
 const MAX_BLUR = 15;
 
 class Star extends Entity {
-    constructor(x: Number, y: Number) {
+    constructor(x: Number, y: Number, radius: Number) {
         super(x, y, NoPhysics());
-        this.size = 2;
+        this.radius = radius;
         this.blur = numberBetween(1, MAX_BLUR);
         this.opacity = 0;
     }
@@ -46,7 +46,7 @@ class Star extends Entity {
         ctx.fillStyle = this.getStarColor();
 
         ctx.beginPath();
-        ctx.arc(0, 0, this.size, 0, 2 * Math.PI);
+        ctx.arc(0, 0, this.radius, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.fill();
 
@@ -65,7 +65,7 @@ class Star extends Entity {
 export const buildStarFieldOfSize = (size): [Star] => {
     const stars = [];
     for (let i = 0; i < size; i++) {
-        stars.push(new Star(100, 100));
+        stars.push(new Star(100, 100, 2));
     }
     return stars;
 };

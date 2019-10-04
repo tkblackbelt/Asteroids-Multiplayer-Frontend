@@ -1,24 +1,42 @@
+import React from 'react';
 import {KEY_A, KEY_D, KEY_SPACE, KEY_W} from "./KeyCode";
 
 
-export default class InputManager {
-    constructor() {
-        this.pressedKeys = {
-            left: false,
-            right: false,
-            forward: false,
-            shoot: false
-        }
-    }
+export default class InputManager extends React.Component {
 
-    bind = () => {
-        window.addEventListener('keydown', this.onKeyPressed);
-        window.addEventListener('keyup', this.onKeyReleased);
+    state = {
+        left: false,
+        right: false,
+        forward: false,
+        shoot: false
     };
 
-    unbind = () => {
+    componentDidMount() {
+        window.addEventListener('keydown', this.onKeyPressed);
+        window.addEventListener('keyup', this.onKeyReleased);
+    }
+
+    componentWillUnmount() {
         window.removeEventListener('keydown', this.onKeyPressed);
         window.removeEventListener('keyup', this.onKeyReleased);
+    }
+
+    render() {
+        return (
+            <React.Fragment>
+                {React.cloneElement(this.props.children, this.getChildrenProps())}
+            </React.Fragment>
+        );
+    }
+
+    getChildrenProps = () => {
+        const props = { ...this.props };
+        delete props['children'];
+
+        return {
+            ...props,
+            pressedKeys: this.state
+        }
     };
 
     onKeyPressed = (event) => this.handleKeyStateChange(event, true);
@@ -26,20 +44,27 @@ export default class InputManager {
 
     handleKeyStateChange = (event, pressed) => {
         const keyCode = event.charCode || event.keyCode;
+        const pressedKeys = {
+            ...this.state
+        };
+
         switch (keyCode) {
             case KEY_A:
-                this.pressedKeys.left = pressed;
+                pressedKeys.left = pressed;
                 break;
             case KEY_D:
-                this.pressedKeys.right = pressed;
+                pressedKeys.right = pressed;
                 break;
             case KEY_W:
-                this.pressedKeys.forward = pressed;
+                pressedKeys.forward = pressed;
                 break;
             case KEY_SPACE:
-                this.pressedKeys.shoot = pressed;
+                pressedKeys.shoot = pressed;
+                break;
             default:
                 break;
         }
+
+        this.setState(pressedKeys)
     }
 }

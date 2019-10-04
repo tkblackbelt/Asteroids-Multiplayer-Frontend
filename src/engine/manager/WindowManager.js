@@ -20,12 +20,16 @@ class WindowManager extends React.Component {
         this.setState({
             width: window.innerWidth,
             height: window.innerHeight
-        })
+        });
     };
 
     render() {
         return (
-            <div>
+            <div style={{
+                width: `${this.state.width}px`,
+                height: `${this.state.height}px`,
+                position: 'fixed',
+            }}>
                 {React.cloneElement(this.props.children, {
                     screenWidth: this.state.width,
                     screenHeight: this.state.height

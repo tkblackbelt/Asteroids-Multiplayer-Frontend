@@ -1,3 +1,11 @@
+@font-face {
+    font-family: zorque;
+    src: url(static/font/zorque.ttf);
+}
+
 html, body {
     margin: 0;
+    color: #ffffff;
+    font-family: zorque, serif;
+    /*height: 100%;*/
 }

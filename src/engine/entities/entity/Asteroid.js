@@ -2,6 +2,7 @@ import Entity from "../Entity";
 import {getRandomColor, numberBetween} from "../../../util/helpers";
 import {generateExplosion} from "./Explosion";
 import {ConstantPhysics} from "../../math/Physics";
+import {playAsteroidExplosion} from "../../manager/AudioManager";
 
 /**
  * Asteroid object
@@ -31,6 +32,7 @@ class Asteroid extends Entity {
     explode(): [Asteroid] {
         this.explosion = generateExplosion(this.position.x, this.position.y);
         this.exploding = true;
+        playAsteroidExplosion();
         return this.generateChildAsteroids();
     }
 
@@ -94,7 +96,7 @@ export const generateAsteroid = (maxX, maxY) => {
             angle: numberBetween(0, 360),
             sides: 6,
             size: numberBetween(20, 80),
-            velocity: numberBetween(1, 4),
+            velocity: numberBetween(.5, 2),
             rotationSpeed: numberBetween(0, 0.1),
             lives: numberBetween(1, 4)
         }

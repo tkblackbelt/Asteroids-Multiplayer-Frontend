@@ -2,6 +2,8 @@ import Entity from "../Entity";
 import Bullet from "./Bullet";
 import {DefaultPhysics} from "../../math/Physics";
 import Particle from "./Particle";
+import {playBlaster} from "../../manager/AudioManager";
+
 
 class Player extends Entity {
 
@@ -32,6 +34,7 @@ class Player extends Entity {
     }
 
     shootBullet(): void {
+        playBlaster();
         this.bullets.push(new Bullet(this.position.x, this.position.y, this.getAngle()));
     }
 

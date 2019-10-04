@@ -1,34 +1,23 @@
 import React from 'react';
-import Game from "./Game";
+import Game from "./components/Game/Game";
 import WindowManager from "./engine/manager/WindowManager";
+import MainMenu from "./components/MainMenu/MainMenu";
+import Canvas from "./components/Canvas";
+
 import './App.css';
+import InputManager from "./engine/manager/InputManager";
 
 export default class App extends React.Component {
-
-    state = {
-        canvas: null,
-        context: null,
-    };
-
-    componentDidMount() {
-        const canvas = this.refs.canvas;
-        this.setState({
-            canvas,
-            context: canvas.getContext('2d')
-        })
-    }
-
     render() {
-        const {canvas, context} = this.state;
         return (
-            <div>
-                <WindowManager>
-                    <Game canvas={canvas} context={context}/>
-                </WindowManager>
-                <canvas ref="canvas">
-                    Canvas is not supported by your browser
-                </canvas>
-            </div>
+            <WindowManager>
+                <Canvas fps={60}>
+                    <MainMenu/>
+                    {/*<InputManager>*/}
+                    {/*    <Game/>*/}
+                    {/*</InputManager>*/}
+                </Canvas>
+            </WindowManager>
         )
     }
 }

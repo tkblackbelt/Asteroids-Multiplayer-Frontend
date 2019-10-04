@@ -1,5 +1,5 @@
 import Drawable from "../Drawable";
-import {buildStarFieldOfSize} from "./Star";
+import Star, {buildStarFieldOfSize} from "./Star";
 
 const CLEAR_SCREEN_COLOR = '#000';
 const LINE_COLOR = 'rgba(147, 147, 147, .5)';
