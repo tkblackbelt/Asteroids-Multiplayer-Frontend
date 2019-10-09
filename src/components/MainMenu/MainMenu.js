@@ -3,6 +3,8 @@ import MainMenuTitle from "./MainMenuTitle";
 import Background from "../../engine/entities/entity/Background";
 import {generateAsteroidField} from "../../engine/entities/entity/Asteroid";
 import MainMenuButton from "./MainMenuButton";
+import {startSinglePlayerGame} from "../../store/actions.ui";
+import {connect} from "react-redux";
 
 const style = {
     root: {
@@ -21,15 +23,12 @@ const style = {
     }
 };
 
-const fpsInterval = 1000 / 30;
-let then = Date.now();
-let startTime = then;
-
 class MainMenu extends React.Component {
 
     state = {
-        background: new Background(0, 300),
-        asteroids: []
+        background: new Background(0, 150),
+        asteroids: [],
+        running: false
     };
 
     componentDidUpdate(prevProps, prevState) {
@@ -48,6 +47,7 @@ class MainMenu extends React.Component {
 
     gameLoop = () => {
         window.requestAnimationFrame(this.gameLoop);
+
         if (this.props.canDraw()) {
             this.update();
             this.draw();
@@ -75,7 +75,7 @@ class MainMenu extends React.Component {
             <div style={style.root}>
                 <MainMenuTitle mainText="ASTEROIDS" subText="ONLINE"/>
                 <div style={style.buttons}>
-                    <MainMenuButton text="Single Player"/>
+                    <MainMenuButton text="Single Player" onClick={this.props.startGame}/>
                     <MainMenuButton text="Multi-Player"/>
                     <MainMenuButton text="Instructions"/>
                 </div>
@@ -84,4 +84,12 @@ class MainMenu extends React.Component {
     }
 }
 
-export default MainMenu;
+const mapDispatchToProps = dispatch => {
+    return {
+        startGame: () => {
+            dispatch(startSinglePlayerGame())
+        }
+    }
+};
+
+export default connect(null, mapDispatchToProps)(MainMenu);

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class WindowManager extends React.Component {
 
@@ -38,5 +39,9 @@ class WindowManager extends React.Component {
         );
     }
 }
+
+WindowManager.propTypes = {
+  children: PropTypes.object.isRequired
+};
 
 export default WindowManager

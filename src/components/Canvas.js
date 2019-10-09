@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class Canvas extends React.Component {
 
@@ -20,8 +21,9 @@ class Canvas extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {screenWidth, screenHeight} = this.props;
+
         this.refs.canvas.width = screenWidth;
-        this.refs.canvas.height = screenHeight
+        this.refs.canvas.height = screenHeight;
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext): boolean {
@@ -33,7 +35,8 @@ class Canvas extends React.Component {
         //will trigger a render
         return currentScreenWidth !== nextProps.screenWidth ||
             currentScreenHeight !== nextProps.screenHeight ||
-            (this.props.context === null && nextProps.context !== null);
+            (this.props.context === null && nextProps.context !== null) ||
+            this.props.children !== nextProps.children;
     }
 
     render() {
@@ -60,7 +63,7 @@ class Canvas extends React.Component {
 
     canDraw = () => {
         if (this.state.context) {
-            const {lastUpdate, fpsInterval} = this.state;
+            const {fpsInterval} = this.state;
 
             if (this.timeSinceLastUpdate() > fpsInterval) {
                 this.setNextAllowedUpdate();
@@ -80,5 +83,12 @@ class Canvas extends React.Component {
         });
     }
 }
+
+Canvas.propTypes = {
+    fps: PropTypes.number,
+    screenWidth: PropTypes.number,
+    screenHeight: PropTypes.number,
+    children: PropTypes.object
+};
 
 export default Canvas

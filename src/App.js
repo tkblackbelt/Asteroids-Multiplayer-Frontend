@@ -6,18 +6,41 @@ import Canvas from "./components/Canvas";
 
 import './App.css';
 import InputManager from "./engine/manager/InputManager";
+import {connect} from "react-redux";
+import {Screens} from "./store/actions.ui";
 
-export default class App extends React.Component {
+class App extends React.Component {
+
+    getScreen = (screen) => {
+        switch (screen) {
+            case Screens.MAIN_MENU:
+                return <MainMenu/>;
+            case Screens.GAME:
+                return <InputManager>
+                    <Game/>
+                </InputManager>;
+            default:
+                return null
+        }
+    };
+
     render() {
+        const {screen, fps} = this.props;
         return (
             <WindowManager>
-                <Canvas fps={60}>
-                    <MainMenu/>
-                    {/*<InputManager>*/}
-                    {/*    <Game/>*/}
-                    {/*</InputManager>*/}
+                <Canvas fps={fps} >
+                    {this.getScreen(screen)}
                 </Canvas>
             </WindowManager>
         )
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        screen: state.screen,
+        fps: state.fps
+    }
+};
+
+export default connect(mapStateToProps, null)(App);

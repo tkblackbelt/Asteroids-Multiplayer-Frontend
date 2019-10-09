@@ -12,6 +12,7 @@ const style = {
     subHeader: {
         fontSize: '3em',
         color: 'red',
+
     }
 };
 

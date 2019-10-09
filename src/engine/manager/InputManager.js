@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {KEY_A, KEY_D, KEY_SPACE, KEY_W} from "./KeyCode";
 
 
@@ -68,3 +69,7 @@ export default class InputManager extends React.Component {
         this.setState(pressedKeys)
     }
 }
+
+InputManager.propTypes = {
+    children: PropTypes.object
+};

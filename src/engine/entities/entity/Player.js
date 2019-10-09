@@ -49,7 +49,7 @@ class Player extends Entity {
     }
 
     die(): void {
-
+    
     }
 
     update(screenWidth: Number, screenHeight: Number) {

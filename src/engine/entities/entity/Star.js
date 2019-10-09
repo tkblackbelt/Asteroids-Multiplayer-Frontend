@@ -1,12 +1,12 @@
 import {numberBetween} from "../../../util/helpers";
 import Entity from "../Entity";
-import {NoPhysics} from "../../math/Physics";
+import {ConstantPhysics, NoPhysics} from "../../math/Physics";
 
 const MAX_BLUR = 15;
 
 class Star extends Entity {
     constructor(x: Number, y: Number, radius: Number) {
-        super(x, y, NoPhysics());
+        super(x, y, ConstantPhysics(.1, Math.PI / 2));
         this.radius = radius;
         this.blur = numberBetween(1, MAX_BLUR);
         this.opacity = 0;
@@ -14,7 +14,7 @@ class Star extends Entity {
 
     update(screenWidth: Number, screenHeight: Number) {
         super.update(screenWidth, screenHeight);
-
+        this.wrapPositionWithinBoundary(0, screenWidth, 0, screenHeight);
         this.updateStarBlur();
         if (this.starNotVisible()) {
             this.refreshStar();
