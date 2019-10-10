@@ -63,9 +63,8 @@ class Canvas extends React.Component {
 
     canDraw = () => {
         if (this.state.context) {
-            const {fpsInterval} = this.state;
 
-            if (this.timeSinceLastUpdate() > fpsInterval) {
+            if (this.timeSinceLastUpdate() > this.state.fpsInterval) {
                 this.setNextAllowedUpdate();
                 return true
             }

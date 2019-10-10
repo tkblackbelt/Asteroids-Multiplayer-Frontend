@@ -8,8 +8,14 @@ import './App.css';
 import InputManager from "./engine/manager/InputManager";
 import {connect} from "react-redux";
 import {Screens} from "./store/actions.ui";
+import {loadAudioSources, playBackgroundMusic} from "./engine/manager/AudioManager";
 
 class App extends React.Component {
+
+    componentDidMount(): void {
+        loadAudioSources();
+        // playBackgroundMusic();
+    }
 
     getScreen = (screen) => {
         switch (screen) {

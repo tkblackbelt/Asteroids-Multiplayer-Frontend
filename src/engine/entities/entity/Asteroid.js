@@ -32,7 +32,6 @@ class Asteroid extends Entity {
     explode(): [Asteroid] {
         this.explosion = generateExplosion(this.position.x, this.position.y);
         this.exploding = true;
-        playAsteroidExplosion();
         return this.generateChildAsteroids();
     }
 
@@ -90,9 +89,30 @@ class Asteroid extends Entity {
  * @returns {Asteroid} new asteroid object
  */
 export const generateAsteroid = (maxX, maxY) => {
+    let _maxX = maxX;
+    let _minX = 0;
+    let _maxY = maxY;
+    let _minY = 0;
+
+    const leftRight = numberBetween(1,50);
+
+    if (leftRight <= 25) {
+        _maxX = ( maxX / 2 ) - (maxX / 10)
+    } else {
+        _minX = ( maxX / 2 ) + (maxX / 10)
+    }
+
+    const topBottom = numberBetween(1, 50);
+
+    if (topBottom <= 25) {
+        _maxY = ( maxY / 2 ) - (maxY / 10)
+    } else {
+        _minY = ( maxY / 2 ) + (maxY / 10)
+    }
+
     return new Asteroid({
-            x: numberBetween(0, maxX),
-            y: numberBetween(0, maxY),
+            x: numberBetween(_minX, _maxX),
+            y: numberBetween(_minY, _maxY),
             angle: numberBetween(0, 360),
             sides: 6,
             size: numberBetween(20, 80),

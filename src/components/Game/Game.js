@@ -1,34 +1,47 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Background from "../../engine/entities/entity/Background";
 import Player from "../../engine/entities/entity/Player";
-import Asteroid, {generateAsteroidField} from "../../engine/entities/entity/Asteroid";
+import {generateAsteroidField} from "../../engine/entities/entity/Asteroid";
 import Stats from "./Stats";
+import {adjustScore, removeLife, startSinglePlayerGame} from "../../store/actions.ui";
+import {connect} from "react-redux";
+import {playAsteroidExplosion, playBlaster} from "../../engine/manager/AudioManager";
 
 
 class Game extends React.Component {
 
     state = {
-        running: false,
         background: new Background(0, 100),
-        player: new Player(400, 400),
-        asteroids: []
+        player: new Player(0, 0),
+        asteroids: [],
+        animationId: 0
     };
 
     componentDidMount() {
+        const {screenWidth, screenHeight} = this.props;
+
+        this.state.player.positionCenterOf(screenWidth, screenHeight);
+        this.setAsteroids(generateAsteroidField(20, screenWidth, screenHeight));
+
         this.initializeGameLoop();
     }
 
+    componentWillUnmount() {
+        window.cancelAnimationFrame(this.state.animationId);
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        // Only screensize changes should trigger re-render
+        return this.props.screenHeight !== nextProps.screenHeight ||
+            this.props.screenWidth !== nextProps.screenWidth;
+    }
+
     initializeGameLoop = () => {
-        this.setState({
-            running: true,
-            asteroids: generateAsteroidField(20, 500, 500)
-        });
         this.gameLoop();
     };
 
     gameLoop = () => {
-        window.requestAnimationFrame(this.gameLoop);
-
         if (this.props.canDraw()) {
             this.processInputs();
             this.processUpdates();
@@ -36,6 +49,10 @@ class Game extends React.Component {
             this.checkCollisions();
             this.drawScreen();
         }
+
+        this.setState({
+            animationId: window.requestAnimationFrame(this.gameLoop)
+        });
     };
 
     processInputs = () => {
@@ -74,9 +91,7 @@ class Game extends React.Component {
         const asteroidsLeft = asteroids.filter(a => !a.shouldRemoveFromScreen());
 
         if (asteroidsLeft.length !== asteroids.length) {
-            this.setState({
-                asteroids: asteroidsLeft
-            })
+            this.setAsteroids(asteroidsLeft);
         }
     };
 
@@ -86,26 +101,19 @@ class Game extends React.Component {
         asteroids
             .filter(a => !a.isExploding())
             .forEach(asteroid => {
-                if (asteroid.isTouching(player)) {
+                if (!player.isDead() && asteroid.isTouching(player)) {
                     player.die();
+                    playAsteroidExplosion();
+                    this.props.removeLife();
                 }
 
-                player.bullets.forEach(bullet => {
-                    if (bullet.isTouching(asteroid)) {
-                        bullet.setUsedUp();
-
-                        const newAsteroids = asteroid.explode();
-                        this.addNewAsteroids(newAsteroids);
-                    }
-                })
+                if (player.bulletsHit(asteroid)) {
+                    playAsteroidExplosion();
+                    const newAsteroids = asteroid.explode();
+                    this.setAsteroids(newAsteroids.concat(asteroids));
+                    this.props.adjustScore(100);
+                }
             });
-    };
-
-    addNewAsteroids = (newAsteroids: [Asteroid]) => {
-        const {asteroids} = this.state;
-        this.setState({
-            asteroids: newAsteroids.concat(asteroids)
-        });
     };
 
     drawScreen = () => {
@@ -117,11 +125,32 @@ class Game extends React.Component {
         asteroids.forEach(a => a.draw(context));
     };
 
+    setAsteroids = (asteroids) => {
+        this.setState({
+            asteroids: asteroids
+        })
+    };
+
     render() {
-        return <div>
-            {/*<Stats/>*/}
-        </div>;
+        return <Stats/>;
     }
 }
 
-export default Game;
+const mapDispatchToProps = dispatch => {
+    return {
+        adjustScore: (scoreDelta: Number) => {
+            dispatch(adjustScore(scoreDelta))
+        },
+        removeLife: () => {
+            dispatch(removeLife());
+        }
+    }
+};
+
+Game.propTypes = {
+    canDraw: PropTypes.func,
+    screenWidth: PropTypes.number,
+    screenHeight: PropTypes.number
+};
+
+export default connect(null, mapDispatchToProps)(Game);

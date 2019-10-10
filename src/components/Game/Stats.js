@@ -1,6 +1,7 @@
 import React from 'react';
 import StatsScore from "./StatsScore";
 import StatsLives from "./StatsLives";
+import {connect} from "react-redux";
 
 class Stats extends React.Component {
     render() {
@@ -8,18 +9,28 @@ class Stats extends React.Component {
             <div style={{
                 position: 'fixed',
                 color: 'white',
-                right: '0',
+                right: '10px',
+                top: '10px',
                 margin: '10px',
-                display: 'flex'
+                display: 'flex',
+                fontSize: '2em',
+                alignItems: 'center'
             }}>
 
-                <StatsLives lives={3}/>
+                <StatsLives lives={this.props.lives}/>
                 <div style={{width: '10px'}}/>
-                <StatsScore score={100}/>
+                <StatsScore score={this.props.score}/>
 
             </div>
         )
     }
 }
 
-export default Stats;
+const mapStateToProps = (state) => {
+    return {
+        score: state.gameState.score,
+        lives: state.gameState.lives
+    }
+};
+
+export default connect(mapStateToProps, null)(Stats);

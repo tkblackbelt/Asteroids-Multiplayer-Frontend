@@ -26,6 +26,11 @@ class Entity extends Drawable {
         this.position.add(this.physics.updateAndGetVelocity());
     }
 
+    positionCenterOf(width: Number, height: Number): void {
+        this.position.x = width / 2;
+        this.position.y = height / 2;
+    }
+
     rotate(delta: Number): void {
         this.physics.adjustAngle(delta)
     }

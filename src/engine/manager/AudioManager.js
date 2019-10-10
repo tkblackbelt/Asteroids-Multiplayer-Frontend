@@ -3,8 +3,8 @@ import '../../static/audio/asteroid_explosion.wav';
 import '../../static/audio/background.wav';
 
 const GAME_SOUNDS_SOURCES = {
-    blaster: {path: 'audio/blaster.wav', volume: 1},
-    asteroid_explosion: {path: 'audio/asteroid_explosion.wav', volume: 1},
+    blaster: {path: 'audio/blaster.wav', volume: .5},
+    asteroid_explosion: {path: 'audio/asteroid_explosion.wav', volume: .5},
     background: {path: 'audio/background.wav', volume: .2}
 };
 

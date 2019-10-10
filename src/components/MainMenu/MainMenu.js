@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import MainMenuTitle from "./MainMenuTitle";
 import Background from "../../engine/entities/entity/Background";
 import {generateAsteroidField} from "../../engine/entities/entity/Asteroid";
@@ -28,15 +29,21 @@ class MainMenu extends React.Component {
     state = {
         background: new Background(0, 150),
         asteroids: [],
-        running: false
+        animationId: 0
     };
+
+    shouldComponentUpdate(nextProps, nextState, nextContext): boolean {
+        return this.props.screenHeight !== nextProps.screenHeight ||
+            this.props.screenWidth !== nextProps.screenWidth
+    }
 
     componentDidUpdate(prevProps, prevState) {
         const {asteroids} = this.state;
+        const {screenWidth, screenHeight} = this.props;
 
         if (asteroids.length === 0) {
             this.setState({
-                asteroids: generateAsteroidField(10, this.props.screenWidth, this.props.screenHeight)
+                asteroids: generateAsteroidField(10, screenWidth, screenHeight)
             })
         }
     }
@@ -45,13 +52,19 @@ class MainMenu extends React.Component {
         this.gameLoop();
     }
 
-    gameLoop = () => {
-        window.requestAnimationFrame(this.gameLoop);
+    componentWillUnmount(): void {
+        window.cancelAnimationFrame(this.state.animationId);
+    }
 
+    gameLoop = () => {
         if (this.props.canDraw()) {
             this.update();
             this.draw();
         }
+
+        this.setState({
+            animationId: window.requestAnimationFrame(this.gameLoop)
+        })
     };
 
     update = () => {
@@ -75,7 +88,7 @@ class MainMenu extends React.Component {
             <div style={style.root}>
                 <MainMenuTitle mainText="ASTEROIDS" subText="ONLINE"/>
                 <div style={style.buttons}>
-                    <MainMenuButton text="Single Player" onClick={this.props.startGame}/>
+                    <MainMenuButton text="Single Player" onClick={this.props.startSinglePlayerGame}/>
                     <MainMenuButton text="Multi-Player"/>
                     <MainMenuButton text="Instructions"/>
                 </div>
@@ -84,9 +97,16 @@ class MainMenu extends React.Component {
     }
 }
 
+MainMenu.propTypes = {
+    startSinglePlayerGame: PropTypes.func,
+    canDraw: PropTypes.func,
+    screenWidth: PropTypes.number,
+    screenHeight: PropTypes.number
+};
+
 const mapDispatchToProps = dispatch => {
     return {
-        startGame: () => {
+        startSinglePlayerGame: () => {
             dispatch(startSinglePlayerGame())
         }
     }
