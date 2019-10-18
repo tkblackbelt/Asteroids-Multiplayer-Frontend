@@ -3,9 +3,9 @@ import '../../static/audio/asteroid_explosion.wav';
 import '../../static/audio/background.wav';
 
 const GAME_SOUNDS_SOURCES = {
-    blaster: {path: 'audio/blaster.wav', volume: .5},
-    asteroid_explosion: {path: 'audio/asteroid_explosion.wav', volume: .5},
-    background: {path: 'audio/background.wav', volume: .2}
+    blaster: {path: 'audio/blaster.wav', volume: .1},
+    asteroid_explosion: {path: 'audio/asteroid_explosion.wav', volume: .2},
+    background: {path: 'audio/background.wav', volume: 0}
 };
 
 const LOADED_SOUNDS = {};
@@ -29,7 +29,7 @@ export function playBackgroundMusic() {
     const aCtx = new AudioContext();
 
     const gainNode = aCtx.createGain();
-    gainNode.gain.value = 0.5; // setting it to 10%
+    gainNode.gain.value = 0.0; // setting it to 10%
     gainNode.connect(aCtx.destination);
 
     let source = aCtx.createBufferSource();
@@ -41,22 +41,8 @@ export function playBackgroundMusic() {
             source.buffer = buf = decoded;
             source.loop = true;
             source.connect(gainNode);
-
-            // check.disabled = false;
         });
-    source.start(0); // start our bufferSource
-    // check.onchange = e => {
-    //     if (check.checked) {
-    //
-    //     } else {
-    //         source.stop(0); // this destroys the buffer source
-    //         source = aCtx.createBufferSource(); // so we need to create a new one
-    //         source.buffer = buf;
-    //         source.loop = true;
-    //         source.connect(aCtx.destination);
-    //     }
-    // };
-    // // playSound('background');
+    source.start(0);
 }
 
 function playSound(sound_source) {

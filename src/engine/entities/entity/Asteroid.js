@@ -2,7 +2,6 @@ import Entity from "../Entity";
 import {getRandomColor, numberBetween} from "../../../util/helpers";
 import {generateExplosion} from "./Explosion";
 import {ConstantPhysics} from "../../math/Physics";
-import {playAsteroidExplosion} from "../../manager/AudioManager";
 
 /**
  * Asteroid object
@@ -29,7 +28,15 @@ class Asteroid extends Entity {
         }
     }
 
-    explode(): [Asteroid] {
+    isExploding(): boolean {
+        return this.exploding;
+    }
+
+    getLives(): number {
+        return this.lives;
+    }
+
+    explodeIntoPieces(): [Asteroid] {
         this.explosion = generateExplosion(this.position.x, this.position.y);
         this.exploding = true;
         return this.generateChildAsteroids();
@@ -37,7 +44,7 @@ class Asteroid extends Entity {
 
     generateChildAsteroids(): [Asteroid] {
         const asteroids = [];
-        for(let i = 0; i < numberBetween(0, this.lives); i++) {
+        for (let i = 0; i < numberBetween(0, this.lives); i++) {
             const asteroid = generateAsteroid(this.position.x, this.position.y);
             asteroid.position = this.position;
             asteroid.lives = this.lives - 1;
@@ -46,10 +53,6 @@ class Asteroid extends Entity {
             asteroids.push(asteroid);
         }
         return asteroids;
-    }
-
-    isExploding(): boolean {
-        return this.exploding;
     }
 
     shouldRemoveFromScreen(): boolean {
@@ -94,20 +97,20 @@ export const generateAsteroid = (maxX, maxY) => {
     let _maxY = maxY;
     let _minY = 0;
 
-    const leftRight = numberBetween(1,50);
+    const leftRight = numberBetween(1, 50);
 
     if (leftRight <= 25) {
-        _maxX = ( maxX / 2 ) - (maxX / 10)
+        _maxX = (maxX / 2) - (maxX / 10)
     } else {
-        _minX = ( maxX / 2 ) + (maxX / 10)
+        _minX = (maxX / 2) + (maxX / 10)
     }
 
     const topBottom = numberBetween(1, 50);
 
     if (topBottom <= 25) {
-        _maxY = ( maxY / 2 ) - (maxY / 10)
+        _maxY = (maxY / 2) - (maxY / 10)
     } else {
-        _minY = ( maxY / 2 ) + (maxY / 10)
+        _minY = (maxY / 2) + (maxY / 10)
     }
 
     return new Asteroid({

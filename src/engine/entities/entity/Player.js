@@ -1,22 +1,20 @@
 import Entity from "../Entity";
-import Bullet from "./Bullet";
 import {DefaultPhysics} from "../../math/Physics";
-import Particle from "./Particle";
-
 import {generateExplosion} from "./Explosion";
 import Blaster from "./Blaster";
+import Thruster from "./Thruster";
 
 
 class Player extends Entity {
 
     constructor(x: Number, y: Number) {
         super(x, y, DefaultPhysics());
-        this.thrusterTrails = [];
         this.blaster = new Blaster();
+        this.thruster = new Thruster();
         this.color = '#f00';
         this.lineSize = 5;
         this.radius = 8;
-        this.dead = false;
+        this.alive = true;
         this.explosion = null;
     }
 
@@ -30,38 +28,36 @@ class Player extends Entity {
 
     enableThrust(): void {
         this.setThrust(.1);
-        this.thrusterTrails.push(this.generateThrusterParticle());
+        this.thruster.addThrust(this.position.x, this.position.y, this.getOppositeAngle());
     }
 
     disableThrust(): void {
         this.setThrust(0);
     }
 
-    shootBullet(): void {
-        this.blaster.shoot(this.position.x, this.position.y, this.getAngle());
+    shootBullet(): boolean {
+        return this.blaster.shoot(this.position.x, this.position.y, this.getAngle());
     }
 
     bulletsHit(entity: Entity): boolean {
         return this.blaster.bulletsHit(entity)
     }
 
-    generateThrusterParticle(): Particle {
-        return new Particle(
-            this.position.x,
-            this.position.y,
-            '#fffff',
-            this.getOppositeAngle(),
-            5,
-            10)
+    respawn(): void {
+        this.alive = true;
+        this.physics.setThrust(0);
+        this.physics.setVelocity(0);
     }
 
     die(): void {
         this.explosion = generateExplosion(this.position.x, this.position.y);
-        this.dead = true;
+        this.physics.setThrust(0);
+        this.physics.setVelocity(0);
+        this.alive = false;
     }
 
-    isDead(): boolean {
-        return this.dead;
+    isAlive(): boolean {
+        return this.alive;
     }
 
     update(screenWidth: Number, screenHeight: Number) {
@@ -69,45 +65,36 @@ class Player extends Entity {
 
         this.wrapPositionWithinBoundary(0, screenWidth, 0, screenHeight);
         this.blaster.update(screenWidth, screenHeight);
-        this.thrusterTrails = this.updateAndDropChildren(this.thrusterTrails, screenWidth, screenHeight);
+        this.thruster.update(screenWidth, screenHeight);
 
-        if (this.isDead()) {
+        if (!this.isAlive()) {
             this.explosion.update(screenWidth, screenHeight);
         }
     }
 
-    updateAndDropChildren(children: [Entity], screenWidth: Number, screenHeight: Number): [] {
-        children.forEach(c => c.update(screenWidth, screenHeight));
-        return children.filter(c => !c.shouldRemoveFromScreen());
-    }
-
     draw(ctx: CanvasRenderingContext2D): void {
         super.draw(ctx);
-        this.drawShip(ctx);
+
+        if (this.isAlive()) {
+            this.drawShip(ctx);
+            this.thruster.draw(ctx);
+        } else {
+            this.explosion.draw(ctx);
+        }
         this.blaster.draw(ctx);
-        this.drawChildren(this.thrusterTrails, ctx);
     }
 
     drawShip(ctx: CanvasRenderingContext2D): void {
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.lineSize;
 
-        if (this.isDead()) {
-            this.explosion.draw(ctx);
-        } else {
-            ctx.strokeStyle = this.color;
-            ctx.lineWidth = this.lineSize;
-
-            ctx.beginPath();
-            ctx.moveTo(20, 0);
-            ctx.lineTo(-20, -20);
-            ctx.lineTo(-20, 20);
-            ctx.lineTo(20, 0);
-            ctx.closePath();
-            ctx.stroke();
-        }
-    }
-
-    drawChildren(children: [Entity], ctx: CanvasRenderingContext2D): void {
-        children.forEach(c => c.draw(ctx));
+        ctx.beginPath();
+        ctx.moveTo(20, 0);
+        ctx.lineTo(-20, -20);
+        ctx.lineTo(-20, 20);
+        ctx.lineTo(20, 0);
+        ctx.closePath();
+        ctx.stroke();
     }
 }
 

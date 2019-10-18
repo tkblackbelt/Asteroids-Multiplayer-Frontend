@@ -4,27 +4,35 @@ import Background from "../../engine/entities/entity/Background";
 import Player from "../../engine/entities/entity/Player";
 import {generateAsteroidField} from "../../engine/entities/entity/Asteroid";
 import Stats from "./Stats";
-import {adjustScore, removeLife, startSinglePlayerGame} from "../../store/actions.ui";
+import {
+    adjustScore,
+    nextLevel,
+    removeLife,
+    resetGame,
+    startMainMenu,
+    startSinglePlayerGame
+} from "../../store/actions.ui";
 import {connect} from "react-redux";
 import {playAsteroidExplosion, playBlaster} from "../../engine/manager/AudioManager";
+import Question from "../common/Question";
+import {numberBetween} from "../../util/helpers";
+import LevelNotification from "./LevelNotification";
 
 
 class Game extends React.Component {
 
     state = {
-        background: new Background(0, 100),
+        background: new Background(100),
         player: new Player(0, 0),
         asteroids: [],
-        animationId: 0
+        animationId: 0,
+        running: false
     };
 
     componentDidMount() {
-        const {screenWidth, screenHeight} = this.props;
-
-        this.state.player.positionCenterOf(screenWidth, screenHeight);
-        this.setAsteroids(generateAsteroidField(20, screenWidth, screenHeight));
-
-        this.initializeGameLoop();
+        this.initializeLevel();
+        this.gameLoop();
+        this.props.nextLevel();
     }
 
     componentWillUnmount() {
@@ -34,11 +42,47 @@ class Game extends React.Component {
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         // Only screensize changes should trigger re-render
         return this.props.screenHeight !== nextProps.screenHeight ||
-            this.props.screenWidth !== nextProps.screenWidth;
+            this.props.screenWidth !== nextProps.screenWidth ||
+            this.props.lives !== nextProps.lives ||
+            this.props.level !== nextProps.level ||
+            this.state.running !== nextState.running ||
+            this.state.asteroids.length !== nextState.asteroids.length;
     }
 
-    initializeGameLoop = () => {
-        this.gameLoop();
+    componentDidUpdate(prevProps, prevState, snapshot): void {
+        if (!this.state.player.isAlive()) {
+            this.respawnPlayer(1000);
+        }
+
+        if (prevProps.level !== this.props.level) {
+            this.initializeLevel();
+        }
+    }
+
+    respawnPlayer = (respondDelayMS) => {
+        const {player} = this.state;
+
+        if (this.props.lives > 0) {
+            setTimeout(() => {
+                player.respawn();
+                player.positionCenterOf(this.props.screenWidth, this.props.screenHeight);
+            }, respondDelayMS)
+        }
+    };
+
+    initializeLevel = () => {
+        const {screenWidth, screenHeight, level} = this.props;
+
+        const baseAsteroidFieldSize = 10;
+        const asteroidFieldSize = numberBetween(1, level) + baseAsteroidFieldSize;
+        const asteroidField = generateAsteroidField(asteroidFieldSize, screenWidth, screenHeight);
+
+        this.setAsteroids(asteroidField);
+        this.respawnPlayer(0);
+
+        this.setState({
+            running: false
+        });
     };
 
     gameLoop = () => {
@@ -56,33 +100,39 @@ class Game extends React.Component {
     };
 
     processInputs = () => {
-        const {player} = this.state;
+        const {player, running} = this.state;
         const {pressedKeys} = this.props;
 
-        if (pressedKeys.left) {
-            player.rotateLeft();
-        } else if (pressedKeys.right) {
-            player.rotateRight();
-        }
+        if (player.isAlive() && running) {
+            if (pressedKeys.left) {
+                player.rotateLeft();
+            } else if (pressedKeys.right) {
+                player.rotateRight();
+            }
 
-        if (pressedKeys.forward) {
-            player.enableThrust();
-        } else {
-            player.disableThrust();
-        }
+            if (pressedKeys.forward) {
+                player.enableThrust();
+            } else {
+                player.disableThrust();
+            }
 
-        if (pressedKeys.shoot) {
-            player.shootBullet();
+            if (pressedKeys.shoot) {
+                player.shootBullet();
+                playBlaster();
+            }
         }
     };
 
     processUpdates = () => {
-        const {background, player, asteroids} = this.state;
+        const {background, player, asteroids, running} = this.state;
         const {screenWidth, screenHeight} = this.props;
 
         background.update(screenWidth, screenHeight);
-        player.update(screenWidth, screenHeight);
-        asteroids.forEach(e => e.update(screenWidth, screenHeight));
+
+        if (running) {
+            player.update(screenWidth, screenHeight);
+            asteroids.forEach(e => e.update(screenWidth, screenHeight));
+        }
     };
 
     removeDeadEntities = () => {
@@ -101,19 +151,39 @@ class Game extends React.Component {
         asteroids
             .filter(a => !a.isExploding())
             .forEach(asteroid => {
-                if (!player.isDead() && asteroid.isTouching(player)) {
-                    player.die();
-                    playAsteroidExplosion();
-                    this.props.removeLife();
+                if (player.isAlive() && asteroid.isTouching(player)) {
+                    this.collisionPlayerAndAsteroid()
                 }
 
                 if (player.bulletsHit(asteroid)) {
-                    playAsteroidExplosion();
-                    const newAsteroids = asteroid.explode();
-                    this.setAsteroids(newAsteroids.concat(asteroids));
-                    this.props.adjustScore(100);
+                    this.collisionBulletAndAsteroid(asteroid);
                 }
             });
+    };
+
+    collisionPlayerAndAsteroid = () => {
+        const {player} = this.state;
+        const {removeLife} = this.props;
+
+        player.die();
+        removeLife();
+        playAsteroidExplosion();
+    };
+
+    collisionBulletAndAsteroid = (asteroid) => {
+        const {asteroids} = this.state;
+        const {adjustScore} = this.props;
+        const childAsteroids = asteroid.explodeIntoPieces();
+
+        this.setAsteroids(childAsteroids.concat(asteroids));
+        adjustScore(this.getScoreIncrease(asteroid));
+        playAsteroidExplosion();
+    };
+
+    getScoreIncrease = (asteroid) => {
+        const baseScore = 50;
+        const variableScore = numberBetween(0, 100) * asteroid.getLives();
+        return baseScore + variableScore;
     };
 
     drawScreen = () => {
@@ -127,12 +197,40 @@ class Game extends React.Component {
 
     setAsteroids = (asteroids) => {
         this.setState({
-            asteroids: asteroids
+            asteroids: asteroids,
+            running: true
+        })
+    };
+
+    isGameOver = () => {
+        return this.props.lives === 0;
+    };
+
+    isLevelCompleted = () => {
+        return this.state.running && this.state.asteroids.length === 0;
+    };
+
+    onLevelStart = () => {
+        this.setState({
+            running: true
         })
     };
 
     render() {
-        return <Stats/>;
+        return <div style={{zIndex: 9999}}>
+            <Stats/>
+            <LevelNotification level={this.props.level} onFinish={this.onLevelStart}/>
+            {this.isGameOver() &&
+            <Question text="GAME OVER" subtext="Play Again?" color="red"
+                      onNoClicked={this.props.startMainMenu}
+                      onYesClicked={this.props.resetGame}/>}
+
+            {this.isLevelCompleted() &&
+            <Question text="SUCCESS!" subtext="Start next round?" color="green"
+                      onNoClicked={this.props.startMainMenu}
+                      onYesClicked={this.props.nextLevel}/>
+            }
+        </div>
     }
 }
 
@@ -143,7 +241,23 @@ const mapDispatchToProps = dispatch => {
         },
         removeLife: () => {
             dispatch(removeLife());
+        },
+        startMainMenu: () => {
+            dispatch(startMainMenu());
+        },
+        nextLevel: () => {
+            dispatch(nextLevel());
+        },
+        resetGame: () => {
+            dispatch(resetGame())
         }
+    }
+};
+
+const mapStateToProps = (state) => {
+    return {
+        lives: state.gameState.lives,
+        level: state.gameState.level
     }
 };
 
@@ -153,4 +267,4 @@ Game.propTypes = {
     screenHeight: PropTypes.number
 };
 
-export default connect(null, mapDispatchToProps)(Game);
+export default connect(mapStateToProps, mapDispatchToProps)(Game);

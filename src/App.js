@@ -14,7 +14,7 @@ class App extends React.Component {
 
     componentDidMount(): void {
         loadAudioSources();
-        // playBackgroundMusic();
+        playBackgroundMusic();
     }
 
     getScreen = (screen) => {
@@ -34,7 +34,7 @@ class App extends React.Component {
         const {screen, fps} = this.props;
         return (
             <WindowManager>
-                <Canvas fps={fps} >
+                <Canvas fps={fps}>
                     {this.getScreen(screen)}
                 </Canvas>
             </WindowManager>

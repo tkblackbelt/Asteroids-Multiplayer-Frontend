@@ -6,25 +6,35 @@ const MAX_BLUR = 15;
 
 class Star extends Entity {
     constructor(x: Number, y: Number, radius: Number) {
-        super(x, y, ConstantPhysics(.1, Math.PI / 2));
+        super(x, y, ConstantPhysics(1, Math.PI / 2));
         this.radius = radius;
         this.blur = numberBetween(1, MAX_BLUR);
         this.opacity = 0;
+        this.previousScreenHeight = 0;
+        this.previousScreenWidth = 0;
     }
 
     update(screenWidth: Number, screenHeight: Number) {
         super.update(screenWidth, screenHeight);
+
+        if(this.previousScreenHeight !== screenHeight || this.previousScreenWidth !== screenWidth) {
+            this.refreshStar();
+        }
+
         this.wrapPositionWithinBoundary(0, screenWidth, 0, screenHeight);
         this.updateStarBlur();
         if (this.starNotVisible()) {
             this.refreshStar();
         }
+
+        this.previousScreenWidth = screenWidth;
+        this.previousScreenHeight = screenHeight;
     }
 
     updateStarBlur() {
-        this.blur += .1;
+        this.blur += .2;
         this.blur = this.blur % MAX_BLUR;
-        this.opacity -= .0001;
+        this.opacity -= .001;
     }
 
     starNotVisible() {
@@ -39,7 +49,6 @@ class Star extends Entity {
 
     draw(ctx: CanvasRenderingContext2D): void {
         super.draw(ctx);
-        ctx.save();
 
         ctx.shadowBlur = this.blur;
         ctx.shadowColor = this.getStarShadowColor();
@@ -49,8 +58,6 @@ class Star extends Entity {
         ctx.arc(0, 0, this.radius, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.fill();
-
-        ctx.restore();
     }
 
     getStarColor() {

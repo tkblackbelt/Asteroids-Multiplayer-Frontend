@@ -1,8 +1,8 @@
 export const SET_SCREEN = 'SET_SCREEN';
-export const SET_SCORE = 'SET_SCORE';
 export const ADJUST_SCORE = 'ADJUST_SCORE';
-export const SET_LIVES = 'SET_LIVES';
 export const ADJUST_LIVES = 'ADJUST_LIVES';
+export const NEXT_LEVEL = 'NEXT_LEVEL';
+export const RESET_GAME = 'RESET_GAME';
 
 export const Screens = Object.freeze({
     MAIN_MENU: Symbol("main_menu"),
@@ -16,38 +16,39 @@ export function startSinglePlayerGame() {
     };
 }
 
-export function setScore(score: Number): void {
+export function startMainMenu() {
     return {
-        type: SET_SCORE,
-        payload: score
+        type: SET_SCREEN,
+        payload: Screens.MAIN_MENU
     };
 }
 
-export function adjustScore(delta: Number): void {
+export function adjustScore(delta: Number) {
     return {
         type: ADJUST_SCORE,
         payload: delta
     };
 }
 
-export function setLives(lives: Number): void {
-    return {
-        type: SET_LIVES,
-        payload: lives
-    };
-}
-
-export function removeLife(): void {
+export function removeLife() {
     return adjustLives(-1);
 }
 
-export function addLife() {
-    return adjustLives(1);
-}
-
-export function adjustLives(delta: Number): void {
+export function adjustLives(delta: Number) {
     return {
         type: ADJUST_LIVES,
         payload: delta
+    }
+}
+
+export function nextLevel() {
+    return {
+        type: NEXT_LEVEL
+    }
+}
+
+export function resetGame() {
+    return {
+        type: RESET_GAME
     }
 }

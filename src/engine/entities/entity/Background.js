@@ -2,38 +2,51 @@ import Drawable from "../Drawable";
 import Star, {buildStarFieldOfSize} from "./Star";
 
 const CLEAR_SCREEN_COLOR = '#000';
-const LINE_COLOR = 'rgba(147, 147, 147, .5)';
+const MS_BETWEEN_UPDATES = 1000 * 5;
 
 class Background extends Drawable {
 
-    constructor(numberOfLines: Number, numberOfStars: Number) {
+    constructor(numberOfStars: Number) {
         super();
-        this.numberOfLines = numberOfLines;
-        this.gridSize = 0;
+        this.lastUpdate = null;
         this.stars = buildStarFieldOfSize(numberOfStars);
+        this.backgroundPreRender = null;
+        this.previousScreenHeight = 0;
+        this.previousScreenWidth = 0;
     }
 
     update(screenWidth: Number, screenHeight: Number): void {
         super.update(screenWidth, screenHeight);
-        this.adjustGridSize();
-        this.updateStars();
+
+
+        if (this.timeSinceLastUpdate() > MS_BETWEEN_UPDATES ||
+            this.previousScreenHeight !== screenHeight || this.previousScreenWidth !== screenWidth) {
+            this.stars.forEach(star => star.update(this.screenWidth, this.screenHeight));
+            this.preRenderBackground();
+            this.calculateNextStarUpdate();
+        }
+
+        this.previousScreenWidth = screenWidth;
+        this.previousScreenHeight = screenHeight;
     }
 
-    adjustGridSize(): Number {
-        const smallestSize = this.screenWidth < this.screenHeight ? this.screenWidth : this.screenHeight;
-        this.gridSize = smallestSize / this.numberOfLines;
+    timeSinceLastUpdate() {
+        return Date.now() - this.lastUpdate;
     }
 
-    updateStars(): void {
-        this.stars.forEach(star => star.update(this.screenWidth, this.screenHeight));
-    }
+    preRenderBackground() {
+        this.backgroundPreRender = document.createElement('canvas');
+        this.backgroundPreRender.width = this.screenWidth;
+        this.backgroundPreRender.height = this.screenHeight;
 
-    draw(ctx: CanvasRenderingContext2D): void {
-        super.draw(ctx);
+        const ctx = this.backgroundPreRender.getContext('2d');
+
         this.clearScreen(ctx);
-        this.drawRows(ctx);
-        this.drawColumns(ctx);
-        this.drawStars(ctx);
+        this.stars.forEach(star => star.draw(ctx));
+    }
+
+    calculateNextStarUpdate() {
+        this.lastUpdate = Date.now() - (this.lastUpdate % MS_BETWEEN_UPDATES)
     }
 
     clearScreen(ctx: CanvasRenderingContext2D): void {
@@ -41,26 +54,9 @@ class Background extends Drawable {
         ctx.fillRect(0, 0, this.screenWidth, this.screenHeight);
     }
 
-    drawRows(ctx: CanvasRenderingContext2D): void {
-        for (let row = this.gridSize; row < this.screenHeight; row += this.gridSize) {
-            ctx.moveTo(0, row);
-            ctx.lineTo(this.screenWidth, row);
-        }
-        ctx.strokeStyle = LINE_COLOR;
-        ctx.stroke();
-    }
-
-    drawColumns(ctx: CanvasRenderingContext2D): void {
-        for (let col = this.gridSize; col < this.screenWidth; col += this.gridSize) {
-            ctx.moveTo(col, 0);
-            ctx.lineTo(col, this.screenHeight);
-        }
-        ctx.strokeStyle = LINE_COLOR;
-        ctx.stroke();
-    }
-
-    drawStars(ctx: CanvasRenderingContext2D): void {
-        this.stars.forEach(star => star.draw(ctx));
+    draw(ctx: CanvasRenderingContext2D): void {
+        super.draw(ctx);
+        ctx.drawImage(this.backgroundPreRender, 0, 0);
     }
 }
 

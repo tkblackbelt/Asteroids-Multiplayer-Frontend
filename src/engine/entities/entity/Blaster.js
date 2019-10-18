@@ -1,7 +1,6 @@
 import Drawable from "../Drawable";
 import Bullet from "./Bullet";
 import Entity from "../Entity";
-import {playBlaster} from "../../manager/AudioManager";
 
 const BULLET_FIRE_PER_SECOND_INTERVAL = 1000 / 5;
 
@@ -22,12 +21,13 @@ export default class Blaster extends Drawable {
         return false;
     }
 
-    shoot(x: Number, y: Number, angle: Number): void {
+    shoot(x: Number, y: Number, angle: Number): boolean {
         if (this.timeSinceLastShot() > BULLET_FIRE_PER_SECOND_INTERVAL) {
-            playBlaster();
             this.bullets.push(new Bullet(x, y, angle));
             this.calculateNextAllowedShot();
+            return true;
         }
+        return false;
     }
 
     timeSinceLastShot() {

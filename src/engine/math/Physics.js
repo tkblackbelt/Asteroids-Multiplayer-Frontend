@@ -106,6 +106,10 @@ export default class Physics {
         return this.angle;
     }
 
+    setVelocity(velocity: Number): void {
+        this.velocity.setLength(velocity);
+    }
+
     hasVelocity(): boolean {
         return this.velocity.length() > 1;
     }

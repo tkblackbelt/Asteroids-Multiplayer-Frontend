@@ -3,19 +3,11 @@ import PropTypes from 'prop-types';
 import MainMenuTitle from "./MainMenuTitle";
 import Background from "../../engine/entities/entity/Background";
 import {generateAsteroidField} from "../../engine/entities/entity/Asteroid";
-import MainMenuButton from "./MainMenuButton";
 import {startSinglePlayerGame} from "../../store/actions.ui";
 import {connect} from "react-redux";
+import Button from "../common/Button";
 
 const style = {
-    root: {
-        display: 'flex',
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        position: 'fixed',
-    },
     buttons: {
         marginTop: '20px',
         display: 'flex',
@@ -27,14 +19,15 @@ const style = {
 class MainMenu extends React.Component {
 
     state = {
-        background: new Background(0, 150),
+        background: new Background(150),
         asteroids: [],
         animationId: 0
     };
 
     shouldComponentUpdate(nextProps, nextState, nextContext): boolean {
         return this.props.screenHeight !== nextProps.screenHeight ||
-            this.props.screenWidth !== nextProps.screenWidth
+            this.props.screenWidth !== nextProps.screenWidth ||
+            this.state.asteroids.length === 0;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -85,24 +78,17 @@ class MainMenu extends React.Component {
 
     render() {
         return (
-            <div style={style.root}>
+            <div className="ui-root">
                 <MainMenuTitle mainText="ASTEROIDS" subText="ONLINE"/>
-                <div style={style.buttons}>
-                    <MainMenuButton text="Single Player" onClick={this.props.startSinglePlayerGame}/>
-                    <MainMenuButton text="Multi-Player"/>
-                    <MainMenuButton text="Instructions"/>
+                <div className="ui-container" style={style.buttons}>
+                    <Button text="Single Player" onClick={this.props.startSinglePlayerGame}/>
+                    <Button text="Multi-Player"/>
+                    <Button text="Leader Board"/>
                 </div>
             </div>
         );
     }
 }
-
-MainMenu.propTypes = {
-    startSinglePlayerGame: PropTypes.func,
-    canDraw: PropTypes.func,
-    screenWidth: PropTypes.number,
-    screenHeight: PropTypes.number
-};
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -113,3 +99,10 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(null, mapDispatchToProps)(MainMenu);
+
+MainMenu.propTypes = {
+    startSinglePlayerGame: PropTypes.func,
+    canDraw: PropTypes.func,
+    screenWidth: PropTypes.number,
+    screenHeight: PropTypes.number
+};

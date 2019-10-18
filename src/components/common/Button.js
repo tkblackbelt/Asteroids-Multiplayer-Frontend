@@ -1,22 +1,16 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
+import '../../App.css';
 
 const baseStyle = {
-    width: '300px',
-    height: '50px',
-    fontSize: '20px',
     opacity: .8,
-    backgroundColor: 'aquamarine',
-    margin: '10px',
-    fontFamily: 'zorque',
-    border: '0',
 };
 
 const hoverStyle = {
     opacity: 1,
 };
 
-export default class MainMenuButton extends React.Component {
+class Button extends React.Component {
 
     state = {
         mouseEntered: false
@@ -34,20 +28,31 @@ export default class MainMenuButton extends React.Component {
         })
     };
 
+    getStyle = () => {
+        const otherStyles = this.state.mouseEntered ? hoverStyle : {};
+        return {
+            ...baseStyle,
+            ...otherStyles,
+            ...this.props.style
+        }
+    };
+
     render() {
         const {onClick, text} = this.props;
-        const {mouseEntered} = this.state;
-
-        const otherStyles = mouseEntered ? hoverStyle : {};
-        const style = {
-            ...baseStyle,
-            ...otherStyles
-        };
 
         return <button
-            style={style}
+            className="ui-button"
+            style={this.getStyle()}
             onMouseEnter={this.onMouseEnter}
             onMouseLeave={this.onMouseLeave}
             onClick={onClick}>{text}</button>;
     }
+}
+
+Button.propTypes = {
+    onClick: PropTypes.func,
+    text: PropTypes.string,
+    style: PropTypes.object
 };
+
+export default Button
