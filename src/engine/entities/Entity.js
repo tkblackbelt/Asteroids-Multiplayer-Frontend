@@ -47,6 +47,10 @@ class Entity extends Drawable {
         this.physics.setVelocity(velocity);
     }
 
+    setAngle(angle: Number): Number {
+        this.physics.setAngle(angle)
+    }
+
     getAngle(): Number {
         return this.physics.getAngle();
     }

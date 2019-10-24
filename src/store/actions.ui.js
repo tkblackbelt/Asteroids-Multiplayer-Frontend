@@ -3,6 +3,8 @@ export const ADJUST_SCORE = 'ADJUST_SCORE';
 export const ADJUST_LIVES = 'ADJUST_LIVES';
 export const NEXT_LEVEL = 'NEXT_LEVEL';
 export const RESET_GAME = 'RESET_GAME';
+export const OPEN_HIGH_SCORES = 'OPEN_HIGH_SCORES';
+export const CLOSE_HIGH_SCORES = 'CLOSE_HIGH_SCORES';
 
 export const Screens = Object.freeze({
     MAIN_MENU: Symbol("main_menu"),
@@ -51,4 +53,16 @@ export function resetGame() {
     return {
         type: RESET_GAME
     }
+}
+
+export function openHighScores() {
+    return {
+        type: OPEN_HIGH_SCORES
+    };
+}
+
+export function closeHighScores() {
+    return {
+        type: CLOSE_HIGH_SCORES
+    };
 }

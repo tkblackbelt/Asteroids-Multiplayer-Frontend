@@ -1,6 +1,6 @@
 import {numberBetween} from "../../../util/helpers";
 import Entity from "../Entity";
-import {ConstantPhysics, NoPhysics} from "../../math/Physics";
+import {ConstantPhysics} from "../../math/Physics";
 
 const MAX_BLUR = 15;
 
@@ -17,7 +17,7 @@ class Star extends Entity {
     update(screenWidth: Number, screenHeight: Number) {
         super.update(screenWidth, screenHeight);
 
-        if(this.previousScreenHeight !== screenHeight || this.previousScreenWidth !== screenWidth) {
+        if (this.previousScreenHeight !== screenHeight || this.previousScreenWidth !== screenWidth) {
             this.refreshStar();
         }
 

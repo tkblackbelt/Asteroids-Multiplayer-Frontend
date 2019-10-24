@@ -4,14 +4,7 @@ import Background from "../../engine/entities/entity/Background";
 import Player from "../../engine/entities/entity/Player";
 import {generateAsteroidField} from "../../engine/entities/entity/Asteroid";
 import Stats from "./Stats";
-import {
-    adjustScore,
-    nextLevel,
-    removeLife,
-    resetGame,
-    startMainMenu,
-    startSinglePlayerGame
-} from "../../store/actions.ui";
+import {adjustScore, nextLevel, removeLife, resetGame, startMainMenu} from "../../store/actions.ui";
 import {connect} from "react-redux";
 import {playAsteroidExplosion, playBlaster} from "../../engine/manager/AudioManager";
 import Question from "../common/Question";
@@ -32,7 +25,6 @@ class Game extends React.Component {
     componentDidMount() {
         this.initializeLevel();
         this.gameLoop();
-        this.props.nextLevel();
     }
 
     componentWillUnmount() {
@@ -54,8 +46,12 @@ class Game extends React.Component {
             this.respawnPlayer(1000);
         }
 
-        if (prevProps.level !== this.props.level) {
+        if (this.props.level > 0 && prevProps.level !== this.props.level) {
             this.initializeLevel();
+        } else {
+            if (this.props.level === 0) {
+                 this.props.nextLevel();
+            }
         }
     }
 
@@ -73,7 +69,7 @@ class Game extends React.Component {
     initializeLevel = () => {
         const {screenWidth, screenHeight, level} = this.props;
 
-        const baseAsteroidFieldSize = 10;
+        const baseAsteroidFieldSize = 5;
         const asteroidFieldSize = numberBetween(1, level) + baseAsteroidFieldSize;
         const asteroidField = generateAsteroidField(asteroidFieldSize, screenWidth, screenHeight);
 
@@ -101,26 +97,28 @@ class Game extends React.Component {
 
     processInputs = () => {
         const {player, running} = this.state;
-        const {pressedKeys} = this.props;
+        const {inputState} = this.props;
 
         if (player.isAlive() && running) {
-            if (pressedKeys.left) {
+
+            if (inputState.left) {
                 player.rotateLeft();
-            } else if (pressedKeys.right) {
+            } else if (inputState.right) {
                 player.rotateRight();
             }
 
-            if (pressedKeys.forward) {
+            if (inputState.forward) {
                 player.enableThrust();
             } else {
                 player.disableThrust();
             }
 
-            if (pressedKeys.shoot) {
+            if (inputState.shoot) {
                 player.shootBullet();
                 playBlaster();
             }
         }
+
     };
 
     processUpdates = () => {
@@ -249,7 +247,7 @@ const mapDispatchToProps = dispatch => {
             dispatch(nextLevel());
         },
         resetGame: () => {
-            dispatch(resetGame())
+            dispatch(resetGame());
         }
     }
 };

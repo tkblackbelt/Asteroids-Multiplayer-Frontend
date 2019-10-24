@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import MainMenuTitle from "./MainMenuTitle";
 import Background from "../../engine/entities/entity/Background";
 import {generateAsteroidField} from "../../engine/entities/entity/Asteroid";
-import {startSinglePlayerGame} from "../../store/actions.ui";
+import {closeHighScores, openHighScores, startSinglePlayerGame} from "../../store/actions.ui";
 import {connect} from "react-redux";
 import Button from "../common/Button";
+import {HighScores} from "./HighScores";
 
 const style = {
     buttons: {
@@ -27,7 +28,8 @@ class MainMenu extends React.Component {
     shouldComponentUpdate(nextProps, nextState, nextContext): boolean {
         return this.props.screenHeight !== nextProps.screenHeight ||
             this.props.screenWidth !== nextProps.screenWidth ||
-            this.state.asteroids.length === 0;
+            this.state.asteroids.length === 0 ||
+            this.props.highScores !== nextProps.highScores;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -77,13 +79,16 @@ class MainMenu extends React.Component {
     };
 
     render() {
+        const {highScores, openHighScores, closeHighScores} = this.props;
+
         return (
             <div className="ui-root">
                 <MainMenuTitle mainText="ASTEROIDS" subText="ONLINE"/>
+                <HighScores open={highScores.open} scores={highScores.scores} onClose={closeHighScores}/>
                 <div className="ui-container" style={style.buttons}>
                     <Button text="Single Player" onClick={this.props.startSinglePlayerGame}/>
                     <Button text="Multi-Player"/>
-                    <Button text="Leader Board"/>
+                    <Button text="Leader Board" onClick={openHighScores}/>
                 </div>
             </div>
         );
@@ -93,12 +98,24 @@ class MainMenu extends React.Component {
 const mapDispatchToProps = dispatch => {
     return {
         startSinglePlayerGame: () => {
-            dispatch(startSinglePlayerGame())
+            dispatch(startSinglePlayerGame());
+        },
+        closeHighScores: () => {
+            dispatch(closeHighScores());
+        },
+        openHighScores: () => {
+            dispatch(openHighScores());
         }
     }
 };
 
-export default connect(null, mapDispatchToProps)(MainMenu);
+const mapStateToProps = (state) => {
+    return {
+        highScores: state.highScores,
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainMenu);
 
 MainMenu.propTypes = {
     startSinglePlayerGame: PropTypes.func,

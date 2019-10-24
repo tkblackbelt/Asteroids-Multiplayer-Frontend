@@ -119,7 +119,7 @@ export default class Vector2D {
         return this;
     }
 
-    isZero () {
+    isZero() {
         return this.x === 0 && this.y === 0;
     }
 

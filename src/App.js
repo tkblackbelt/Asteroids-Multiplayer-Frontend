@@ -14,7 +14,7 @@ class App extends React.Component {
 
     componentDidMount(): void {
         loadAudioSources();
-        playBackgroundMusic();
+        // playBackgroundMusic();
     }
 
     getScreen = (screen) => {

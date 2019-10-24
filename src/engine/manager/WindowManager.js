@@ -41,7 +41,7 @@ class WindowManager extends React.Component {
 }
 
 WindowManager.propTypes = {
-  children: PropTypes.object.isRequired
+    children: PropTypes.object.isRequired
 };
 
 export default WindowManager

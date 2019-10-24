@@ -10,7 +10,7 @@ function renderLives(lives: Number, maxLives: Number) {
 
     for (let live = 0; live < maxLives; live++) {
         const style = {};
-        if(live >= lives) {
+        if (live >= lives) {
             style['opacity'] = 0;
         }
 

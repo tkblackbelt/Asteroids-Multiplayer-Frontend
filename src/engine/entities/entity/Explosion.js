@@ -14,7 +14,7 @@ class Explosion extends Entity {
         const particles = [];
         for (let i = 0; i < numberOfParticles; i++) {
             particles.push(new Particle(this.position.x,
-                this.position.y, this.color, numberBetween(1, 360), numberBetween(10,30), 10));
+                this.position.y, this.color, numberBetween(1, 360), numberBetween(10, 30), 10));
         }
         return particles;
     }

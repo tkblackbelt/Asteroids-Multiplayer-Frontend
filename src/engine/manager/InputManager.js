@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import nipplejs from 'nipplejs';
-import {KEY_A, KEY_D, KEY_S, KEY_SPACE, KEY_W} from "./KeyCode";
+import {KEY_A, KEY_D, KEY_SPACE, KEY_W} from "./KeyCode";
 
 
 export default class InputManager extends React.Component {
@@ -10,26 +9,12 @@ export default class InputManager extends React.Component {
         left: false,
         right: false,
         forward: false,
-        shoot: false,
-        mobileControls: true,
-        mobileManager: null
+        shoot: false
     };
 
     componentDidMount() {
         window.addEventListener('keydown', this.onKeyPressed);
         window.addEventListener('keyup', this.onKeyReleased);
-        const options = {
-            zone: document.getElementById('joystick'),
-            mode: 'static',
-            position: {left: '10%', bottom: '10%'}
-        };
-        const nipple = nipplejs.create(options);
-        nipple.on('move', this.onJoyStickMoved);
-        nipple.on('end', this.onJoyStickEnd);
-
-        this.setState({
-            mobileManager: nipple
-        });
     }
 
     componentWillUnmount() {
@@ -37,29 +22,10 @@ export default class InputManager extends React.Component {
         window.removeEventListener('keyup', this.onKeyReleased);
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot): void {
-        if (this.props.screenHeight < 720 || this.props.screenWidth < 720) {
-            if (!this.state.mobileControls) {
-                this.setState({
-                    mobileControls: true
-                })
-            }
-        } else {
-            if (this.state.mobileControls) {
-                this.setState({
-                    mobileControls: false
-                })
-            }
-        }
-    }
-
     render() {
-        // const display = !this.state.mobileControls ? {} : {display: 'none'};
         return (
             <React.Fragment>
                 {React.cloneElement(this.props.children, this.getChildrenProps())}
-                <div style={{width: '100%', height: '25%', position: 'fixed', bottom: '10%'}}
-                     id="joystick"/>
             </React.Fragment>
         );
     }
@@ -70,37 +36,20 @@ export default class InputManager extends React.Component {
 
         return {
             ...props,
-            pressedKeys: this.state
+            inputState: {
+                left: this.state.left,
+                right: this.state.right,
+                forward: this.state.forward,
+                shoot: this.state.shoot
+            }
         }
     };
 
 
     onJoyStickMoved = (event, data) => {
-        console.log(event, data);
-
-        if (data.direction.x === "left") {
-            this.handleKeyStateChange({charCode: KEY_A}, true);
-            this.handleKeyStateChange({charCode: KEY_D}, false);
-        } else {
-            this.handleKeyStateChange({charCode: KEY_D}, true);
-            this.handleKeyStateChange({charCode: KEY_A}, false)
-        }
-
-        if (data.direction.y === "up") {
-            this.handleKeyStateChange({charCode: KEY_W}, true);
-            this.handleKeyStateChange({charCode: KEY_S}, false)
-        } else {
-            this.handleKeyStateChange({charCode: KEY_S}, true);
-            this.handleKeyStateChange({charCode: KEY_W}, false);
-        }
+        this.setState({angle: (360 - data.angle.degree) * Math.PI / 180})
     };
-
-    onJoyStickEnd = () => {
-        this.handleKeyStateChange({charCode: KEY_A}, false);
-        this.handleKeyStateChange({charCode: KEY_D}, false);
-        this.handleKeyStateChange({charCode: KEY_S}, false);
-        this.handleKeyStateChange({charCode: KEY_W}, false);
-    };
+    onJoyStickEnd = () => this.setState({angle: 0});
 
     onKeyPressed = (event) => this.handleKeyStateChange(event, true);
     onKeyReleased = (event) => this.handleKeyStateChange(event, false);

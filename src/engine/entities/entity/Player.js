@@ -13,9 +13,10 @@ class Player extends Entity {
         this.thruster = new Thruster();
         this.color = '#f00';
         this.lineSize = 5;
-        this.radius = 8;
+        this.radius = 9;
         this.alive = true;
         this.explosion = null;
+        this.setAngle(1.5708);
     }
 
     rotateLeft(): void {
@@ -89,10 +90,10 @@ class Player extends Entity {
         ctx.lineWidth = this.lineSize;
 
         ctx.beginPath();
-        ctx.moveTo(20, 0);
+        ctx.moveTo(30, 0);
         ctx.lineTo(-20, -20);
         ctx.lineTo(-20, 20);
-        ctx.lineTo(20, 0);
+        ctx.lineTo(30, 0);
         ctx.closePath();
         ctx.stroke();
     }
