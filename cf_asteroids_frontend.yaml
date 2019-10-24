@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "S3 Hosted Frontend for Asteroid Game with CI/CD pipeline"
+Resources:
+
+  PublicWebsiteBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      AccessControl: PublicRead
+      BucketName: charlesbenger.com
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt [PublicWebsiteBucket, WebsiteURL]
+    Description: URL for website hosted on S3
+  S3BucketSecureURL:
+    Value: !Join ['', ['https://', !GetAtt [PublicWebsiteBucket, DomainName]]]
+    Description: Name of S3 bucket to hold website content
+
