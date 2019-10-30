@@ -16,7 +16,6 @@ class Player extends Entity {
         this.radius = 9;
         this.alive = true;
         this.explosion = null;
-        this.setAngle(1.5708);
     }
 
     rotateLeft(): void {
