@@ -4,8 +4,8 @@
   "description": "Web Asteroids Clone with online multi-player and match making",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "start": "webpack-dashboard -- webpack-dev-server src/index.js"
+    "build": "webpack --config webpack.prod.js",
+    "start": "webpack-dashboard -- webpack-dev-server src/index.js --config webpack.dev.js"
   },
   "repository": {
     "type": "git",
@@ -34,7 +34,8 @@
     "style-loader": "^1.0.0",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9",
-    "webpack-dashboard": "^3.2.0"
+    "webpack-dashboard": "^3.2.0",
+    "webpack-merge": "^4.2.2"
   },
   "dependencies": {
     "nipplejs": "^0.8.3",

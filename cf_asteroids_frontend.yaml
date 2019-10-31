@@ -15,7 +15,6 @@ Outputs:
     Value: !Join ['', ['https://', !GetAtt [PublicWebsiteBucket, DomainName]]]
     Description: Name of S3 bucket to hold website content
 
-
 Resources:
   CloudFormationTrustRole:
     Description: Creating service role in IAM for AWS CloudFormation
