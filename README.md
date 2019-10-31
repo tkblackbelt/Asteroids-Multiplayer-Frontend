@@ -20,6 +20,10 @@ Create a cf_parameters.json file as shown below
 ```
 [
   {
+    "ParameterKey": "WebSiteBucketName",
+    "ParameterValue": "chuckbenger.com"
+  },
+  {
     "ParameterKey": "GitHubUsername",
     "ParameterValue": "tkblackbelt"
   },
@@ -41,6 +45,8 @@ To create the stack run
 To update the stack run 
 
 `cloudformation update-stack --stack-name "AsteroidsFrontendStack" --template-body file://./cf_asteroids_frontend.yaml --capabilities CAPABILITY_NAMED_IAM --parameters file://./parameters.json`
+
+Once the stack is deployed you can browse the cloudformation output in the AWS Console to get the website URL
 
 To destroy the stack run
 

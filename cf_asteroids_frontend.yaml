@@ -2,6 +2,9 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "S3 Hosted Frontend for Asteroid Game with CI/CD pipeline"
 
 Parameters:
+  WebSiteBucketName:
+    Type: String
+    Description: The name of the bucket to host your website
   GitHubUsername:
     Type: String
     Description: Your GitHub Username
@@ -19,8 +22,6 @@ Outputs:
   S3BucketSecureURL:
     Value: !Join ['', ['https://', !GetAtt [PublicWebsiteBucket, DomainName]]]
     Description: Name of S3 bucket to hold website content
-  GitHubRepo:
-    Value: !Ref GitHubRepo
 
 Resources:
   CloudFormationTrustRole:
@@ -440,7 +441,7 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       AccessControl: PublicRead
-      BucketName: chuckbenger.com
+      BucketName: !Ref WebSiteBucketName
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
