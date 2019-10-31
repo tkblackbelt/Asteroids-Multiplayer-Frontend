@@ -14,7 +14,37 @@ To run locally enter the commands below
 
 ## Deployment
 
-TBD
+To Deploy to a CI/CD Pipeline on AWS follow the instruction below.
+
+Create a cf_parameters.json file as shown below
+```
+[
+  {
+    "ParameterKey": "GitHubUsername",
+    "ParameterValue": "tkblackbelt"
+  },
+  {
+    "ParameterKey": "GitHubRepo",
+    "ParameterValue": "Asteroids-Multiplayer-Frontend"
+  },
+  {
+    "ParameterKey": "GitHubOAuthToken",
+    "ParameterValue": "<ENTER YOUR OAUTH TOKEN>"
+  }
+]
+```
+
+To create the stack run 
+
+`cloudformation create-stack --stack-name "AsteroidsFrontendStack" --template-body file://./cf_asteroids_frontend.yaml --capabilities CAPABILITY_NAMED_IAM --parameters file://./parameters.json`
+
+To update the stack run 
+
+`cloudformation update-stack --stack-name "AsteroidsFrontendStack" --template-body file://./cf_asteroids_frontend.yaml --capabilities CAPABILITY_NAMED_IAM --parameters file://./parameters.json`
+
+To destroy the stack run
+
+`cloudformation delete-stack --stack-name "AsteroidsFrontendStack"`
 
 ## Built With
 
