@@ -360,13 +360,15 @@ Resources:
           Actions:
             - ActionTypeId:
                 Category: Source
-                Owner: AWS
-                Provider: CodeCommit
+                Owner: ThirdParty
+                Provider: GitHub
                 Version: 1
               Configuration:
-                BranchName: master
+                Owner: tkblackbelt
+                Repo: Asteroids-Multiplayer-Frontend
+                Branch: master
                 PollForSourceChanges: false
-                RepositoryName: !Ref CodeCommitRepoName
+                OAuthToken: f9c7d6dad47df92dc5d7058b684ab30baa6846bd
               InputArtifacts: [
               ]
               Name: ApplicationSource
