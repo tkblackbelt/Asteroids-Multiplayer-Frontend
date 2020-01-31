@@ -45,12 +45,6 @@ export default class InputManager extends React.Component {
         }
     };
 
-
-    onJoyStickMoved = (event, data) => {
-        this.setState({angle: (360 - data.angle.degree) * Math.PI / 180})
-    };
-    onJoyStickEnd = () => this.setState({angle: 0});
-
     onKeyPressed = (event) => this.handleKeyStateChange(event, true);
     onKeyReleased = (event) => this.handleKeyStateChange(event, false);
 

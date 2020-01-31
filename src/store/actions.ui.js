@@ -1,8 +1,4 @@
 export const SET_SCREEN = 'SET_SCREEN';
-export const ADJUST_SCORE = 'ADJUST_SCORE';
-export const ADJUST_LIVES = 'ADJUST_LIVES';
-export const NEXT_LEVEL = 'NEXT_LEVEL';
-export const RESET_GAME = 'RESET_GAME';
 export const OPEN_HIGH_SCORES = 'OPEN_HIGH_SCORES';
 export const CLOSE_HIGH_SCORES = 'CLOSE_HIGH_SCORES';
 
@@ -23,36 +19,6 @@ export function startMainMenu() {
         type: SET_SCREEN,
         payload: Screens.MAIN_MENU
     };
-}
-
-export function adjustScore(delta: Number) {
-    return {
-        type: ADJUST_SCORE,
-        payload: delta
-    };
-}
-
-export function removeLife() {
-    return adjustLives(-1);
-}
-
-export function adjustLives(delta: Number) {
-    return {
-        type: ADJUST_LIVES,
-        payload: delta
-    }
-}
-
-export function nextLevel() {
-    return {
-        type: NEXT_LEVEL
-    }
-}
-
-export function resetGame() {
-    return {
-        type: RESET_GAME
-    }
 }
 
 export function openHighScores() {

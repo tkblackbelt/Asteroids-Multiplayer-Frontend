@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import StatsScore from "./StatsScore";
 import StatsLives from "./StatsLives";
 import {connect} from "react-redux";
@@ -24,12 +25,10 @@ class Stats extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        score: state.gameState.score,
-        lives: state.gameState.lives,
-        maxLives: state.gameState.maxLives
-    }
+Stats.propTypes = {
+    score: PropTypes.number,
+    lives: PropTypes.number,
+    maxLives: PropTypes.number,
 };
 
-export default connect(mapStateToProps, null)(Stats);
+export default Stats;

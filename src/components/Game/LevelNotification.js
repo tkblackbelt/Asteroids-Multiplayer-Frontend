@@ -10,14 +10,18 @@ class LevelNotification extends React.Component {
         countDownInterval: null
     };
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.level > 0 && this.props.level !== prevProps.level) {
+    componentDidUpdate(prevProps, prevState, snapshot) {   
+        if (this.props.open !== prevProps.open) {
             this.setState({
                 open: true,
                 countDownSeconds: this.state.notificationTimeoutSeconds,
                 countDownInterval: this.startCountDown()
             });
         }
+    }
+
+    shouldComponentUpdate(nextProps) {
+        return this.state.open || nextProps.open;
     }
 
     componentWillUnmount() {
@@ -73,7 +77,8 @@ class LevelNotification extends React.Component {
 
 LevelNotification.propTypes = {
     level: PropTypes.number,
-    onFinish: PropTypes.func
+    onFinish: PropTypes.func,
+    open: PropTypes.bool
 };
 
 export default LevelNotification

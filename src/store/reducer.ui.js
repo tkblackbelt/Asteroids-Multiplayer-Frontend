@@ -10,7 +10,7 @@ import {
 } from "./actions.ui";
 
 const initialState = {
-    screen: Screens.MAIN_MENU,
+    screen: Screens.GAME,
     highScores: {
         open: false,
         scores: [
@@ -19,24 +19,9 @@ const initialState = {
             {user: 'Chuck', score: 10000},
         ]
     },
-    gameState: {
-        level: 0,
-        score: 0,
-        lives: 3,
-        maxLives: 3,
-    },
     fps: 60
 };
 
-function updateGameState(state, changes) {
-    return {
-        ...state,
-        gameState: {
-            ...state.gameState,
-            ...changes
-        }
-    }
-}
 
 function updateHighScores(state, changes) {
     return {
@@ -56,14 +41,6 @@ export function AsteroidsGame(state = initialState, action) {
                 screen: action.payload,
                 gameState: initialState.gameState
             };
-        case ADJUST_LIVES:
-            return updateGameState(state, {lives: state.gameState.lives + action.payload});
-        case ADJUST_SCORE:
-            return updateGameState(state, {score: state.gameState.score + action.payload});
-        case NEXT_LEVEL:
-            return updateGameState(state, {level: state.gameState.level + 1});
-        case RESET_GAME:
-            return updateGameState(state, initialState.gameState);
         case OPEN_HIGH_SCORES:
             return updateHighScores(state, {open: true});
         case CLOSE_HIGH_SCORES:

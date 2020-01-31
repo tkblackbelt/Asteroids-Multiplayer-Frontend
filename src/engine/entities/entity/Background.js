@@ -1,5 +1,5 @@
 import Drawable from "../Drawable";
-import {buildStarFieldOfSize} from "./Star";
+import { buildStarFieldOfSize } from "./Star";
 
 const CLEAR_SCREEN_COLOR = '#000';
 const MS_BETWEEN_UPDATES = 1000 * 5;
@@ -56,7 +56,9 @@ class Background extends Drawable {
 
     draw(ctx: CanvasRenderingContext2D): void {
         super.draw(ctx);
-        ctx.drawImage(this.backgroundPreRender, 0, 0);
+        if (this.backgroundPreRender) {
+            ctx.drawImage(this.backgroundPreRender, 0, 0);
+        }
     }
 }
 

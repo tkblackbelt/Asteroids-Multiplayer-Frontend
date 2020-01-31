@@ -1,6 +1,6 @@
 import Entity from "../Entity";
-import {DefaultPhysics} from "../../math/Physics";
-import {generateExplosion} from "./Explosion";
+import { DefaultPhysics } from "../../math/Physics";
+import { generateExplosion } from "./Explosion";
 import Blaster from "./Blaster";
 import Thruster from "./Thruster";
 
@@ -16,6 +16,28 @@ class Player extends Entity {
         this.radius = 9;
         this.alive = true;
         this.explosion = null;
+        this.lives = 3;
+        this.score = 0;
+    }
+
+    setLives(lives: Number): void {
+        this.lives = lives;
+    }
+
+    getLives(): Number {
+        return this.lives;
+    }
+
+    removeLife(): void {
+        this.lives -= 1;        
+    }
+
+    setScore(score: Number) {
+        this.score = score;
+    }
+
+    getScore(): Number {
+        return this.score;
     }
 
     rotateLeft(): void {
@@ -44,12 +66,15 @@ class Player extends Entity {
     }
 
     respawn(): void {
-        this.alive = true;
-        this.physics.setThrust(0);
-        this.physics.setVelocity(0);
+        if (this.lives > 0) {
+            this.alive = true;
+            this.physics.setThrust(0);
+            this.physics.setVelocity(0);
+        }
     }
 
     die(): void {
+        this.removeLife();
         this.explosion = generateExplosion(this.position.x, this.position.y);
         this.physics.setThrust(0);
         this.physics.setVelocity(0);

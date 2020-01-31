@@ -7,6 +7,7 @@ import {closeHighScores, openHighScores, startSinglePlayerGame} from "../../stor
 import {connect} from "react-redux";
 import Button from "../common/Button";
 import {HighScores} from "./HighScores";
+import Client from '../../engine/network/Client';
 
 const style = {
     buttons: {
@@ -68,6 +69,8 @@ class MainMenu extends React.Component {
 
         background.update(screenWidth, screenHeight);
         asteroids.forEach(a => a.update(screenWidth, screenHeight))
+
+        // this.state.client.emitPlayerUpdate({name: "Chuck"})
     };
 
     draw = () => {

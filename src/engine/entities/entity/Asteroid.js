@@ -91,7 +91,7 @@ class Asteroid extends Entity {
  * @param maxY the maximum y position that it can be generated at
  * @returns {Asteroid} new asteroid object
  */
-export const generateAsteroid = (maxX, maxY) => {
+export const generateAsteroid = (maxX: Number, maxY: Number) => {
     let _maxX = maxX;
     let _minX = 0;
     let _maxY = maxY;
@@ -113,10 +113,12 @@ export const generateAsteroid = (maxX, maxY) => {
         _minY = (maxY / 2) + (maxY / 10)
     }
 
+    const angleInRadians = numberBetween(0, 360) * (Math.PI / 180);
+
     return new Asteroid({
             x: numberBetween(_minX, _maxX),
             y: numberBetween(_minY, _maxY),
-            angle: numberBetween(0, 360),
+            angle: angleInRadians,
             sides: 6,
             size: numberBetween(20, 80),
             velocity: numberBetween(.5, 2),
@@ -126,7 +128,7 @@ export const generateAsteroid = (maxX, maxY) => {
     )
 };
 
-export const generateAsteroidField = (size, maxX, maxY) => {
+export const generateAsteroidField = (size: Number, maxX: Number, maxY: Number) => {
     const asteroids = [];
     for (let i = 0; i < size; i++) {
         asteroids.push(generateAsteroid(maxX, maxY))

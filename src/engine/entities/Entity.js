@@ -35,6 +35,10 @@ class Entity extends Drawable {
         this.physics.adjustAngle(delta)
     }
 
+    getPosition(): Vector2D {
+        return this.position;
+    }
+
     getOppositeAngle(): Number {
         return this.physics.getAngle() + Math.PI;
     }
