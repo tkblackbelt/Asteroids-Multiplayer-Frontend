@@ -32,6 +32,7 @@ class GameUI extends React.Component {
 
     componentWillUnmount() {
         window.cancelAnimationFrame(this.state.animationId);
+        
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -98,19 +99,19 @@ class GameUI extends React.Component {
         if (player.isAlive() && running) {
 
             if (inputState.left) {
-                player.rotateLeft();
+                game.rotatePlayerLeft();
             } else if (inputState.right) {
-                player.rotateRight();
+                game.rotatePlayerRight();
             }
 
             if (inputState.forward) {
-                player.enableThrust();
+                game.enablePlayerThrust();
             } else {
-                player.disableThrust();
+                game.disablePlayerThrust();
             }
 
             if (inputState.shoot) {
-                player.shootBullet();
+                game.shootPlayerBullet();
                 playBlaster();
             }
         }

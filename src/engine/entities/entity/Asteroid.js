@@ -26,6 +26,7 @@ class Asteroid extends Entity {
         } else {
             this.wrapPositionWithinBoundary(0, screenWidth, 0, screenHeight);
         }
+        // console.log(this.position.x, this.position.y);
     }
 
     isExploding(): boolean {

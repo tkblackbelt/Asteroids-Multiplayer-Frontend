@@ -60,7 +60,7 @@ export default class Physics {
         this.rotationSpeed = rotationSpeed;
     }
 
-    updateAndGetVelocity(): void {
+    updateAndGetVelocity(): Vector2D {
         this.applyRotation();
 
         if (this.isThrusting()) {

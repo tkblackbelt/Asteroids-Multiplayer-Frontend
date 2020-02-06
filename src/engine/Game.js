@@ -31,6 +31,7 @@ export default class Game {
         this.variableScoreMax = config.variableScoreMin;
         this.maxLives = config.maxLives;
         this.level = 1;
+        this.initialized = false;
         this.player.positionCenterOf(this.screenWidth, this.screenHeight);
         this.update();
     }
@@ -41,6 +42,10 @@ export default class Game {
 
     getLevel(): Number {
         return this.level;
+    }
+
+    getPlayers(): [Player] {
+        return [];
     }
 
     getPlayer(): Player {
@@ -64,6 +69,10 @@ export default class Game {
         return this.asteroids.length === 0;
     }
 
+    isInitialized(): Boolean {
+        return this.initialized;
+    }
+
     advanceLevel(): void {
         this.level += 1;
     }
@@ -71,6 +80,26 @@ export default class Game {
     respawnPlayer(): void {
         this.player.respawn();
         this.player.positionCenterOf(this.screenWidth, this.screenHeight);
+    }
+
+    rotatePlayerLeft(): void {
+        this.player.rotateLeft();
+    }
+
+    rotatePlayerRight(): void {
+        this.player.rotateRight();
+    }
+
+    enablePlayerThrust(): void {
+        this.player.enableThrust();
+    }
+
+    disablePlayerThrust(): void {
+        this.player.disableThrust();
+    }
+
+    shootPlayerBullet(): void {
+        this.player.shootBullet();
     }
 
     reset() {
@@ -86,6 +115,11 @@ export default class Game {
 
         this.setAsteroids(asteroidField);
         this.player.positionCenterOf(this.screenWidth, this.screenHeight);
+        this.initialized = true;
+    }
+
+    endLevel() {
+        this.initialized = false;
     }
 
     update(): void {

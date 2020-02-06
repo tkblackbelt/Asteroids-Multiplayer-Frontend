@@ -5,8 +5,8 @@ class LevelNotification extends React.Component {
 
     state = {
         open: true,
-        notificationTimeoutSeconds: 3,
-        countDownSeconds: 3,
+        notificationTimeoutSeconds: 1,
+        countDownSeconds: 1,
         countDownInterval: null
     };
 
