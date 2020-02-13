@@ -23,6 +23,7 @@ export default class Game {
     constructor(config: GameConfigT) {
         this.player = new Player(0, 0);
         this.asteroids = []
+        this.deadAsteroids = [];
         this.background = new Background(config.numberOfStars);
         this.screenWidth = config.screenWidth;
         this.screenHeight = config.screenHeight;
@@ -155,6 +156,8 @@ export default class Game {
         }
 
         if (player.bulletsHit(asteroid)) {
+            this.deadAsteroids.push(asteroid);
+
             const scoreIncrease = this.getScoreIncrease(asteroid);
             const childAsteroids = asteroid.explodeIntoPieces();
             const fullAsteroids = childAsteroids.concat(this.asteroids);

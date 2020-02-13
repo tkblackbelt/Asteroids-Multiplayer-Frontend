@@ -1,14 +1,14 @@
 import Entity from "../Entity";
-import {getRandomColor, numberBetween} from "../../../util/helpers";
-import {generateExplosion} from "./Explosion";
-import {ConstantPhysics} from "../../math/Physics";
+import { getRandomColor, numberBetween } from "../../../util/helpers";
+import { generateExplosion } from "./Explosion";
+import { ConstantPhysics } from "../../math/Physics";
 
 /**
  * Asteroid object
  */
 class Asteroid extends Entity {
 
-    constructor({x, y, angle, sides, size, velocity, rotationSpeed, lives}) {
+    constructor({ id, x, y, angle, sides, size, velocity, rotationSpeed, lives }) {
         super(x, y, ConstantPhysics(velocity, angle, rotationSpeed));
         this.sides = sides;
         this.radius = size;
@@ -16,6 +16,7 @@ class Asteroid extends Entity {
         this.explosion = null;
         this.exploding = false;
         this.lives = lives;
+        this.id = id;
     }
 
     update(screenWidth: Number, screenHeight: Number) {
@@ -117,15 +118,15 @@ export const generateAsteroid = (maxX: Number, maxY: Number) => {
     const angleInRadians = numberBetween(0, 360) * (Math.PI / 180);
 
     return new Asteroid({
-            x: numberBetween(_minX, _maxX),
-            y: numberBetween(_minY, _maxY),
-            angle: angleInRadians,
-            sides: 6,
-            size: numberBetween(20, 80),
-            velocity: numberBetween(.5, 2),
-            rotationSpeed: numberBetween(0, 0.1),
-            lives: numberBetween(1, 4)
-        }
+        x: numberBetween(_minX, _maxX),
+        y: numberBetween(_minY, _maxY),
+        angle: angleInRadians,
+        sides: 6,
+        size: numberBetween(20, 80),
+        velocity: numberBetween(.5, 2),
+        rotationSpeed: numberBetween(0, 0.1),
+        lives: numberBetween(1, 4)
+    }
     )
 };
 

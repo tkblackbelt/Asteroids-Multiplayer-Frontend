@@ -10,6 +10,7 @@ import {
 } from './network/packets';
 import Player from './entities/entity/Player';
 import Asteroid from './entities/entity/Asteroid';
+import AsteroidKilledPacket from './network/packets/AsteroidKilledPacket';
 
 class NetworkGame extends Game {
 
@@ -37,7 +38,16 @@ class NetworkGame extends Game {
         // const asteroidField = generateAsteroidField(asteroidFieldSize, this.screenWidth, this.screenHeight);
 
         // this.setAsteroids(asteroidField);
-       
+
+    }
+
+    checkCollision(asteroid: Asteroid, player: Player, collision: CollisionResultT): void {
+        super.checkCollision(asteroid, player, collision);
+        this.deadAsteroids.forEach(asteroid => {
+            console.log(asteroid)
+            this.client.sendPacket(new AsteroidKilledPacket(asteroid.id))
+        })
+        this.deadAsteroids = [];
     }
 
     update(): void {
@@ -84,6 +94,17 @@ class NetworkGame extends Game {
             this.handleGameJoinPacket(packet);
         } else if (packet instanceof GameLeavePacket) {
             this.handleGameLeavePacket(packet);
+        } else if (packet instanceof AsteroidKilledPacket) {
+
+            this.asteroids.forEach(asteroid => {
+                if (asteroid.id === packet.asteroidID) {
+                    const childAsteroids = asteroid.explodeIntoPieces();
+                    const fullAsteroids = childAsteroids.concat(this.asteroids);
+                    this.setAsteroids(fullAsteroids); 
+                    
+                }
+            })
+
         } else {
             throw new Error(`NO PACKET HANDLER FOR ${packet}`);
         }

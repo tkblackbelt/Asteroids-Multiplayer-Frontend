@@ -4,6 +4,7 @@ import PlayerPositionPacket from "./PlayerPositionPacket";
 import GameInitPacket from './GameInitPacket';
 import GameJoinPacket from './GameJoinPacket';
 import GameLeavePacket from './GameLeavePacket';
+import AsteroidKilledPacket from './AsteroidKilledPacket';
 import Packet from './Packet';
 
 const packetTypeToDecoder = {};
@@ -13,6 +14,7 @@ packetTypeToDecoder[PlayerBlastPacket.getType()] = PlayerBlastPacket.decode;
 packetTypeToDecoder[GameInitPacket.getType()] = GameInitPacket.decode;
 packetTypeToDecoder[GameJoinPacket.getType()] = GameJoinPacket.decode;
 packetTypeToDecoder[GameLeavePacket.getType()] = GameLeavePacket.decode;
+packetTypeToDecoder[AsteroidKilledPacket.getType()] = AsteroidKilledPacket.decode;
 
 export function decode(data: JSON): Packet {
     const packetType = data["packet_type"];
@@ -34,3 +36,4 @@ export { default as PlayerBlastPacket } from './PlayerBlastPacket';
 export { default as GameInitPacket } from './GameInitPacket';
 export { default as GameJoinPacket } from './GameJoinPacket';
 export { default as GameLeavePacket } from './GameLeavePacket';
+export { default as AsteroidKilledPacket } from './AsteroidKilledPacket';

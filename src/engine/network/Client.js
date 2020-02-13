@@ -8,6 +8,7 @@ class Client {
         this.socket = null;
         this.gameID = gameID;
         this.playerID = Math.random().toString();
+        console.log("MY PLAYER ID", this.playerID);
         this.previousPackets = {};
     }
 
@@ -32,14 +33,14 @@ class Client {
     }
 
     onDisconnect = () => {
-        console.log(`Disconnecting from game server gameID: ${this.gameID}`);
+        console.log(`Disconnecting frm game server gameID: ${this.gameID}`);
 
         this.sendPacket(new GameLeavePacket(this.playerID, this.gameID), 'leave');
     }
 
     onDataReceved = (data) => {
         const packet = decode(data);
-        this.handlePacket(packet);
+        this.handlePacket(packet); 
 
     }
 
