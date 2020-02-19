@@ -32,7 +32,7 @@ class GameUI extends React.Component {
 
     componentWillUnmount() {
         window.cancelAnimationFrame(this.state.animationId);
-        
+        this.props.game.exit();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {

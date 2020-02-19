@@ -6,18 +6,20 @@ import {
     PlayerBlastPacket,
     GameInitPacket,
     GameJoinPacket,
-    GameLeavePacket
+    GameLeavePacket,
+    PlayerDiedPacket
 } from './network/packets';
 import Player from './entities/entity/Player';
 import Asteroid from './entities/entity/Asteroid';
 import AsteroidKilledPacket from './network/packets/AsteroidKilledPacket';
+import PlayerRespawnPacket from './network/packets/PlayerRespawnPacket';
 
 class NetworkGame extends Game {
 
-    constructor(config: GameConfigT, host: String, game_id: String) {
+    constructor(config: GameConfigT, host: String, game_id: String, playerName: String) {
         super(config);
 
-        this.client = new Client("123", this.handlePacket);
+        this.client = new Client("123", playerName, this.handlePacket);
         this.otherPlayers = {};
         this.client.connect(host);
         this.previousPlayerUpdate = null;
@@ -32,7 +34,12 @@ class NetworkGame extends Game {
         this.client.sendPacket(new PlayerBlastPacket(this.client.getPlayerID()));
     }
 
-    initializeLevel() {
+    exit(): void {
+        this.client.disconnect();
+        // alert("BYE");
+    }
+
+    initializeLevel(): void {
         // const baseAsteroidFieldSize = 1;
         // const asteroidFieldSize = numberBetween(1, this.level) + baseAsteroidFieldSize;
         // const asteroidField = generateAsteroidField(asteroidFieldSize, this.screenWidth, this.screenHeight);
@@ -41,13 +48,22 @@ class NetworkGame extends Game {
 
     }
 
-    checkCollision(asteroid: Asteroid, player: Player, collision: CollisionResultT): void {
-        super.checkCollision(asteroid, player, collision);
-        this.deadAsteroids.forEach(asteroid => {
-            console.log(asteroid)
-            this.client.sendPacket(new AsteroidKilledPacket(asteroid.id))
-        })
-        this.deadAsteroids = [];
+    respawnPlayer(): void {
+        super.respawnPlayer();
+        this.client.sendPacket(new PlayerRespawnPacket(this.client.getPlayerID()));
+    }
+
+    handlePlayerCollision(): void {
+        super.handlePlayerCollision();
+        this.client.sendPacket(new PlayerDiedPacket(this.client.getPlayerID()));
+    }
+
+    handleAsteroidCollision(asteroid: Asteroid): void {
+        const scoreIncrease = this.getScoreIncrease(asteroid);
+
+        asteroid.explode();
+        this.player.setScore(this.player.getScore() + scoreIncrease);
+        this.client.sendPacket(new AsteroidKilledPacket(asteroid.id));
     }
 
     update(): void {
@@ -70,7 +86,8 @@ class NetworkGame extends Game {
             position.x,
             position.y,
             player.getAngle(),
-            this.client.getPlayerID()
+            this.client.getPlayerID(),
+            player.isThrusting()
         );
     }
 
@@ -95,16 +112,11 @@ class NetworkGame extends Game {
         } else if (packet instanceof GameLeavePacket) {
             this.handleGameLeavePacket(packet);
         } else if (packet instanceof AsteroidKilledPacket) {
-
-            this.asteroids.forEach(asteroid => {
-                if (asteroid.id === packet.asteroidID) {
-                    const childAsteroids = asteroid.explodeIntoPieces();
-                    const fullAsteroids = childAsteroids.concat(this.asteroids);
-                    this.setAsteroids(fullAsteroids); 
-                    
-                }
-            })
-
+            this.handleAsteroidExplodedPacket(packet);
+        } else if (packet instanceof PlayerDiedPacket) {
+            this.handlePlayerDiedPacket(packet);
+        } else if (packet instanceof PlayerRespawnPacket) {
+            this.handlePlayerRespawnPacket(packet);
         } else {
             throw new Error(`NO PACKET HANDLER FOR ${packet}`);
         }
@@ -115,6 +127,11 @@ class NetworkGame extends Game {
             const player = this.otherPlayers[packet.playerID];
 
             if (player) {
+                if (packet.thrusting) {
+                    player.enableThrust();
+                } else {
+                    player.disableThrust();
+                }
                 player.position.x = packet.x;
                 player.position.y = packet.y;
                 player.setAngle(packet.angle);
@@ -132,9 +149,8 @@ class NetworkGame extends Game {
     }
 
     handleGameInitPacket(packet: GameInitPacket): void {
-
         const asteroids = packet.config.asteroids;
-        console.log("INIT PACKET", packet);
+
         this.asteroids = asteroids.map(asteroid => {
             return new Asteroid(asteroid)
         })
@@ -143,13 +159,13 @@ class NetworkGame extends Game {
     }
 
     handleGameJoinPacket(packet: GameJoinPacket): void {
+        console.log("GAME JOIN", packet);
         if (this.isNotMyPlayer(packet.playerID)) {
             const existingPlayer = this.otherPlayers[packet.playerID];
 
             if (!existingPlayer) {
                 const newPlayer = new Player(0, 0);
                 this.otherPlayers[packet.playerID] = newPlayer;
-                console.log(`New player joined`, packet)
             }
         }
     }
@@ -157,7 +173,32 @@ class NetworkGame extends Game {
     handleGameLeavePacket(packet: GameLeavePacket): void {
         if (this.isNotMyPlayer(packet.playerID)) {
             delete this.otherPlayers[packet.playerID];
-            console.log("REMOVING PLAYER");
+        }
+    }
+
+    handleAsteroidExplodedPacket(packet: AsteroidKilledPacket): void {
+        this.asteroids.forEach(asteroid => {
+            if (asteroid.id === packet.asteroidID) {
+                if (!asteroid.isExploding()) {
+                    asteroid.explode();
+                }
+
+            }
+        })
+    }
+
+    handlePlayerDiedPacket(packet: PlayerDiedPacket): void {
+        if (this.isNotMyPlayer(packet.playerID)) {
+            this.otherPlayers[packet.playerID].die();
+        }
+    }
+
+    handlePlayerRespawnPacket(packet: PlayerRespawnPacket): void {
+        if (this.isNotMyPlayer(packet.playerID)) {
+            const player = this.otherPlayers[packet.playerID];
+
+            player.respawn();
+            player.positionCenterOf(this.screenWidth, this.screenHeight);
         }
     }
 }

@@ -27,6 +27,10 @@ class App extends React.Component {
                 return <InputManager>
                     <GameUI game={this.getGame()} />
                 </InputManager>;
+            case Screens.MULTIPLAYER_GAME:
+                return <InputManager>
+                    <GameUI game={this.getGame()} />
+                </InputManager>
             default:
                 return null
         }
@@ -43,7 +47,9 @@ class App extends React.Component {
             maxLives: 3
         }
 
-        return new NetworkGame(gameConfig, 'http://localhost:5000');
+        const { multiPlayer } = this.props;
+
+        return new NetworkGame(gameConfig, 'http://localhost:5000', '', multiPlayer.playerName);
     }
 
     render() {
@@ -61,7 +67,8 @@ class App extends React.Component {
 const mapStateToProps = (state) => {
     return {
         screen: state.screen,
-        fps: state.fps
+        fps: state.fps,
+        multiPlayer: state.multiPlayer
     }
 };
 

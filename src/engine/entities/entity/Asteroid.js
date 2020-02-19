@@ -44,6 +44,11 @@ class Asteroid extends Entity {
         return this.generateChildAsteroids();
     }
 
+    explode(): void {
+        this.explosion = generateExplosion(this.position.x, this.position.y);
+        this.exploding = true;
+    }
+
     generateChildAsteroids(): [Asteroid] {
         const asteroids = [];
         for (let i = 0; i < numberBetween(0, this.lives); i++) {

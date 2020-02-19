@@ -1,16 +1,13 @@
 import {
-    ADJUST_LIVES,
-    ADJUST_SCORE,
     CLOSE_HIGH_SCORES,
-    NEXT_LEVEL,
     OPEN_HIGH_SCORES,
-    RESET_GAME,
     Screens,
-    SET_SCREEN
+    SET_SCREEN,
+    START_MULTIPLAYER
 } from "./actions.ui";
 
 const initialState = {
-    screen: Screens.GAME,
+    screen: Screens.MAIN_MENU,
     highScores: {
         open: false,
         scores: [
@@ -18,6 +15,9 @@ const initialState = {
             {user: 'Jim', score: 88888},
             {user: 'Chuck', score: 10000},
         ]
+    },
+    multiPlayer: {
+        playerName: ""
     },
     fps: 60
 };
@@ -39,8 +39,15 @@ export function AsteroidsGame(state = initialState, action) {
             return {
                 ...state,
                 screen: action.payload,
-                gameState: initialState.gameState
             };
+        case START_MULTIPLAYER:
+            return {
+                ...state,
+                screen: action.payload.screen,
+                multiPlayer: {
+                    playerName: action.payload.playerName
+                }
+            }
         case OPEN_HIGH_SCORES:
             return updateHighScores(state, {open: true});
         case CLOSE_HIGH_SCORES:

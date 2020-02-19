@@ -2,10 +2,11 @@ import Packet from './Packet';
 
 class PlayerPositionPacket extends Packet {
 
-    constructor(x: Number, y: Number, angle: Number, playerID: String) {
+    constructor(x: Number, y: Number, angle: Number, playerID: String, thrusting: Boolean) {
         super();
         this.x = x;
         this.y = y;
+        this.thrusting = thrusting;
         this.angle = angle;
         this.playerID = playerID;
     }
@@ -16,7 +17,8 @@ class PlayerPositionPacket extends Packet {
             x: this.round(this.x),
             y: this.round(this.y),
             angle: this.round(this.angle),
-            player_id: this.playerID
+            player_id: this.playerID,
+            thrusting: this.thrusting
         }
     }
 
@@ -25,8 +27,8 @@ class PlayerPositionPacket extends Packet {
     }
 
     static decode(data: JSON): PlayerPositionPacket {
-        const { x, y, angle, player_id} = data;
-        return new PlayerPositionPacket(x, y, angle, player_id);
+        const { x, y, angle, player_id, thrusting} = data;
+        return new PlayerPositionPacket(x, y, angle, player_id, thrusting);
     }
 
     static getType(): String {

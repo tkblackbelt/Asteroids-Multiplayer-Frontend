@@ -3,12 +3,13 @@ import { decode, PlayerPositionPacket, Packet, GameJoinPacket, GameLeavePacket }
 
 class Client {
 
-    constructor(gameID: String, handlePacket: (packet: Packet) => void) {
+    constructor(gameID: String, playerName: String,
+        handlePacket: (packet: Packet) => void) {
         this.handlePacket = handlePacket;
         this.socket = null;
         this.gameID = gameID;
+        this.playerName = playerName;
         this.playerID = Math.random().toString();
-        console.log("MY PLAYER ID", this.playerID);
         this.previousPackets = {};
     }
 
@@ -17,6 +18,11 @@ class Client {
         this.socket.on('connect', this.onConnect);
         this.socket.on('disconnect', this.onDisconnect);
         this.socket.on('data', this.onDataReceved);
+    }
+
+    disconnect(): void {
+        this.onDisconnect();
+        this.socket.close();
     }
 
     getPlayerID(): String {
@@ -29,7 +35,7 @@ class Client {
     onConnect = () => {
         console.log(`Connected to game server gameID: ${this.gameID}`);
 
-        this.sendPacket(new GameJoinPacket(this.playerID, this.gameID), 'join');
+        this.sendPacket(new GameJoinPacket(this.playerID, this.gameID, this.playerName), 'join');
     }
 
     onDisconnect = () => {
@@ -40,7 +46,7 @@ class Client {
 
     onDataReceved = (data) => {
         const packet = decode(data);
-        this.handlePacket(packet); 
+        this.handlePacket(packet);
 
     }
 

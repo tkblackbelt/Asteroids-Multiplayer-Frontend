@@ -23,7 +23,6 @@ export default class Game {
     constructor(config: GameConfigT) {
         this.player = new Player(0, 0);
         this.asteroids = []
-        this.deadAsteroids = [];
         this.background = new Background(config.numberOfStars);
         this.screenWidth = config.screenWidth;
         this.screenHeight = config.screenHeight;
@@ -109,6 +108,10 @@ export default class Game {
         this.level = 1;
     }
 
+    exit() {
+
+    }
+
     initializeLevel() {
         const baseAsteroidFieldSize = 1;
         const asteroidFieldSize = numberBetween(1, this.level) + baseAsteroidFieldSize;
@@ -151,21 +154,29 @@ export default class Game {
     checkCollision(asteroid: Asteroid, player: Player, collision: CollisionResultT): void {
 
         if (player.isAlive() && asteroid.isTouching(player)) {
-            player.die();
+            this.handlePlayerCollision();
             collision.playerHit = true;
         }
 
         if (player.bulletsHit(asteroid)) {
-            this.deadAsteroids.push(asteroid);
+            this.handleAsteroidCollision(asteroid);
 
-            const scoreIncrease = this.getScoreIncrease(asteroid);
-            const childAsteroids = asteroid.explodeIntoPieces();
-            const fullAsteroids = childAsteroids.concat(this.asteroids);
-
-            this.player.setScore(this.player.getScore() + scoreIncrease);
-            this.setAsteroids(fullAsteroids);
             collision.asteroidHit = true;
         }
+    }
+
+    handlePlayerCollision(): void {
+        this.player.die();
+    }
+
+    handleAsteroidCollision(asteroid: Asteroid): void {
+
+        const scoreIncrease = this.getScoreIncrease(asteroid);
+        const childAsteroids = asteroid.explodeIntoPieces();
+        const fullAsteroids = childAsteroids.concat(this.asteroids);
+
+        this.player.setScore(this.player.getScore() + scoreIncrease);
+        this.setAsteroids(fullAsteroids);
     }
 
     getScoreIncrease(asteroid: Asteroid): Number {

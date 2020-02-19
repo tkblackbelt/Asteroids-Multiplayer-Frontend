@@ -46,6 +46,7 @@ class Entity extends Drawable {
     setThrust(thrust: Number): void {
         this.physics.setThrust(thrust);
     }
+    
 
     setVelocity(velocity: Number): void {
         this.physics.setVelocity(velocity);
@@ -61,6 +62,10 @@ class Entity extends Drawable {
 
     hasVelocity(): Boolean {
         return this.physics.hasVelocity();
+    }
+
+    isThrusting(): Boolean {
+        return this.physics.isThrusting()
     }
 
     shouldRemoveFromScreen(): boolean {
