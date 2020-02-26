@@ -4,4 +4,4 @@
 /dist/*
 /.idea/
 /.idea/*
-./cf_parameters.json
+cf_parameters.json

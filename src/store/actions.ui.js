@@ -6,6 +6,8 @@ export const JOIN_MULTIPLAYER_GAMEROOM = 'JOIN_MULTIPLAYER_ROOM';
 export const OPEN_HIGH_SCORES = 'OPEN_HIGH_SCORES';
 export const CLOSE_HIGH_SCORES = 'CLOSE_HIGH_SCORES';
 
+const API = 'https://zgn8c4rya7.execute-api.ca-central-1.amazonaws.com/Prod';
+
 export const Screens = Object.freeze({
     MAIN_MENU: Symbol("main_menu"),
     GAME: Symbol("game"),
@@ -22,7 +24,7 @@ export function startSinglePlayerGame() {
 export function checkForGameStart(playerID: String) {
     if (playerID) {
         return (dispatch) => {
-            axios.get(`/game/${playerID}`)
+            axios.get(`${API}/game/${playerID}`)
                 .then(response => {
                     dispatch({
                         type: JOIN_MULTIPLAYER_GAMEROOM,
@@ -42,7 +44,7 @@ export function startMultiPlayerGame(playerName: String) {
 
     return (dispatch) => {
         const body = { "name": playerName };
-        axios.post(`/game`, body)
+        axios.post(`${API}/game`, body)
             .then(response => {
                 dispatch({
                     type: START_MULTIPLAYER,
