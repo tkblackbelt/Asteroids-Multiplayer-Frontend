@@ -7,26 +7,57 @@ import {
     GameInitPacket,
     GameJoinPacket,
     GameLeavePacket,
-    PlayerDiedPacket
+    PlayerDiedPacket,
+    PlayerStatsUpdatePacket
 } from './network/packets';
 import Player from './entities/entity/Player';
 import Asteroid from './entities/entity/Asteroid';
 import AsteroidKilledPacket from './network/packets/AsteroidKilledPacket';
 import PlayerRespawnPacket from './network/packets/PlayerRespawnPacket';
 
+
+const gameConfig: GameConfigT = {
+    numberOfStars: 100,
+    screenWidth: window.innerWidth,
+    screenHeight: window.innerHeight,
+    baseScore: 100,
+    variableScoreMin: 0,
+    variableScoreMax: 0,
+    maxLives: 3
+}
+
 class NetworkGame extends Game {
 
-    constructor(config: GameConfigT, host: String, game_id: String, playerName: String) {
-        super(config);
+    constructor(host: String, onPlayerUpdateCB: Function) {
 
-        this.client = new Client("123", playerName, this.handlePacket);
+        super(gameConfig);
+        this.host = host;
+        this.client = null;
         this.otherPlayers = {};
-        this.client.connect(host);
         this.previousPlayerUpdate = null;
+        this.onPlayersUpdated = onPlayerUpdateCB;
+    }
+
+    joinGame(gameID: String, playerName: String, playerID: String): void {
+        if (!this.client) {
+            this.player.setName(playerName);
+            this.client = new Client(gameID, playerID, this.player, this.handlePacket);
+            this.client.connect(this.host);
+        }
+    }
+
+    setOnPlayersUpdatedCB(fn: Function): void {
+        this.onPlayersUpdated = fn;
+    }
+
+    playersUpdated(): void {
+        if (this.onPlayersUpdated) {
+            this.onPlayersUpdated();
+        }
     }
 
     getPlayers(): [Player] {
-        return this.otherPlayers;
+        return Object.values(this.otherPlayers);
     }
 
     shootPlayerBullet(): void {
@@ -46,6 +77,14 @@ class NetworkGame extends Game {
 
         // this.setAsteroids(asteroidField);
 
+    }
+
+    getScoreIncrease(asteroid: Asteroid): Number {
+        return 0;
+    };
+
+    getVariableScore(asteroid: Asteroid): Number {
+        return 0;
     }
 
     respawnPlayer(): void {
@@ -117,6 +156,8 @@ class NetworkGame extends Game {
             this.handlePlayerDiedPacket(packet);
         } else if (packet instanceof PlayerRespawnPacket) {
             this.handlePlayerRespawnPacket(packet);
+        } else if (packet instanceof PlayerStatsUpdatePacket) {
+            this.handlePlayerStatsUpdatePacket(packet);
         } else {
             throw new Error(`NO PACKET HANDLER FOR ${packet}`);
         }
@@ -149,13 +190,15 @@ class NetworkGame extends Game {
     }
 
     handleGameInitPacket(packet: GameInitPacket): void {
-        const asteroids = packet.config.asteroids;
-
+        const asteroids = packet.asteroids;
+        console.log("INITIALIZING GAME!!!!", packet);
         this.asteroids = asteroids.map(asteroid => {
             return new Asteroid(asteroid)
         })
         this.player.positionCenterOf(this.screenWidth, this.screenHeight);
+        this.level = packet.level;
         this.initialized = true;
+        this.playersUpdated();
     }
 
     handleGameJoinPacket(packet: GameJoinPacket): void {
@@ -165,7 +208,10 @@ class NetworkGame extends Game {
 
             if (!existingPlayer) {
                 const newPlayer = new Player(0, 0);
+                newPlayer.setColor(packet.color);
+                newPlayer.setName(packet.playerName);
                 this.otherPlayers[packet.playerID] = newPlayer;
+                this.playersUpdated();
             }
         }
     }
@@ -173,6 +219,7 @@ class NetworkGame extends Game {
     handleGameLeavePacket(packet: GameLeavePacket): void {
         if (this.isNotMyPlayer(packet.playerID)) {
             delete this.otherPlayers[packet.playerID];
+            this.playersUpdated();
         }
     }
 
@@ -181,8 +228,8 @@ class NetworkGame extends Game {
             if (asteroid.id === packet.asteroidID) {
                 if (!asteroid.isExploding()) {
                     asteroid.explode();
+                    this.playersUpdated();
                 }
-
             }
         })
     }
@@ -190,6 +237,7 @@ class NetworkGame extends Game {
     handlePlayerDiedPacket(packet: PlayerDiedPacket): void {
         if (this.isNotMyPlayer(packet.playerID)) {
             this.otherPlayers[packet.playerID].die();
+            this.playersUpdated();
         }
     }
 
@@ -199,6 +247,22 @@ class NetworkGame extends Game {
 
             player.respawn();
             player.positionCenterOf(this.screenWidth, this.screenHeight);
+            this.playersUpdated();
+        }
+    }
+
+    handlePlayerStatsUpdatePacket(packet: PlayerStatsUpdatePacket): void {
+        let player = null;
+
+        if (this.isNotMyPlayer(packet.playerID)) {
+            player = this.otherPlayers[packet.playerID];
+        } else {
+            player = this.player;
+        }
+
+        if (player) {
+            player.setScore(packet.score);
+            player.setLives(packet.lives);
         }
     }
 }

@@ -11,13 +11,22 @@ class Player extends Entity {
         super(x, y, DefaultPhysics());
         this.blaster = new Blaster();
         this.thruster = new Thruster();
-        this.color = '#f00';
+        this.color = '#ff'
         this.lineSize = 5;
         this.radius = 9;
         this.alive = true;
         this.explosion = null;
         this.lives = 3;
         this.score = 0;
+        this.name = "";
+    }
+
+    setColor(color: String): void {
+        this.color = color;
+    }
+
+    getColor(): String {
+        return this.color;
     }
 
     setLives(lives: Number): void {
@@ -30,6 +39,14 @@ class Player extends Entity {
 
     removeLife(): void {
         this.lives -= 1;        
+    }
+
+    setName(name: String): void {
+        this.name = name;
+    }
+
+    getName(): String {
+        return this.name;
     }
 
     setScore(score: Number) {

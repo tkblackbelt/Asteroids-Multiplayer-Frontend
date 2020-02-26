@@ -1,15 +1,16 @@
 import io from 'socket.io-client';
 import { decode, PlayerPositionPacket, Packet, GameJoinPacket, GameLeavePacket } from './packets/';
+import Player from '../entities/entity/Player';
 
 class Client {
 
-    constructor(gameID: String, playerName: String,
+    constructor(gameID: String, playerID: String, player: Player,
         handlePacket: (packet: Packet) => void) {
         this.handlePacket = handlePacket;
         this.socket = null;
         this.gameID = gameID;
-        this.playerName = playerName;
-        this.playerID = Math.random().toString();
+        this.player = player;
+        this.playerID = playerID;
         this.previousPackets = {};
     }
 
@@ -35,7 +36,8 @@ class Client {
     onConnect = () => {
         console.log(`Connected to game server gameID: ${this.gameID}`);
 
-        this.sendPacket(new GameJoinPacket(this.playerID, this.gameID, this.playerName), 'join');
+        this.sendPacket(new GameJoinPacket(this.playerID, this.gameID,
+            this.player.getName(), this.player.getColor()), 'join');
     }
 
     onDisconnect = () => {

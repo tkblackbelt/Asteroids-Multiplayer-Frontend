@@ -82,8 +82,9 @@ class GameUI extends React.Component {
                 }
                 this.checkForGameEnd();
             }
-            game.draw(context);
         }
+
+        game.draw(context);
 
         this.setState({
             animationId: window.requestAnimationFrame(this.gameLoop)
@@ -163,9 +164,9 @@ class GameUI extends React.Component {
     renderStats = () => {
         const { game } = this.props;
         const player = game.getPlayer();
-
+ 
         return <Stats score={player.getScore()}
-            lives={player.getLives()} maxLives={game.getMaxLives()} />
+            lives={player.getLives()} maxLives={game.getMaxLives()} level={game.getLevel()} />
     };
 
     renderLevelNotification = () => {

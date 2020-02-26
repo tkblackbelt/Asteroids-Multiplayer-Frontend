@@ -1,5 +1,5 @@
 import Entity from "../Entity";
-import { getRandomColor, numberBetween } from "../../../util/helpers";
+import { numberBetween, getRandomColor } from "../../../util/helpers";
 import { generateExplosion } from "./Explosion";
 import { ConstantPhysics } from "../../math/Physics";
 
@@ -8,11 +8,11 @@ import { ConstantPhysics } from "../../math/Physics";
  */
 class Asteroid extends Entity {
 
-    constructor({ id, x, y, angle, sides, size, velocity, rotationSpeed, lives }) {
+    constructor({ id, x, y, angle, sides, size, velocity, rotationSpeed, lives, color }) {
         super(x, y, ConstantPhysics(velocity, angle, rotationSpeed));
         this.sides = sides;
         this.radius = size;
-        this.color = getRandomColor();
+        this.color = color;
         this.explosion = null;
         this.exploding = false;
         this.lives = lives;
@@ -130,7 +130,8 @@ export const generateAsteroid = (maxX: Number, maxY: Number) => {
         size: numberBetween(20, 80),
         velocity: numberBetween(.5, 2),
         rotationSpeed: numberBetween(0, 0.1),
-        lives: numberBetween(1, 4)
+        lives: numberBetween(1, 4),
+        color: getRandomColor()
     }
     )
 };

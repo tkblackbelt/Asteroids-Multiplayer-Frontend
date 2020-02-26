@@ -8,15 +8,15 @@ import './App.css';
 import InputManager from "./engine/manager/InputManager";
 import { connect } from "react-redux";
 import { Screens } from "./store/actions.ui";
-import { loadAudioSources, playBackgroundMusic } from "./engine/manager/AudioManager";
-import Game, { GameConfigT } from './engine/Game';
+import { loadAudioSources } from "./engine/manager/AudioManager";
+import NetworkGameUI from './components/Game/NetworkGameUI';
 import NetworkGame from './engine/NetworkGame';
+import Game from './engine/Game';
 
 class App extends React.Component {
 
     componentDidMount(): void {
         loadAudioSources();
-        // playBackgroundMusic();
     }
 
     getScreen = (screen) => {
@@ -24,33 +24,27 @@ class App extends React.Component {
             case Screens.MAIN_MENU:
                 return <MainMenu />;
             case Screens.GAME:
+                const game = new Game({
+                    numberOfStars: 100,
+                    screenWidth: window.innerWidth,
+                    screenHeight: window.innerHeight,
+                    baseScore: 100,
+                    variableScoreMin: 1,
+                    variableScoreMax: 50,
+                    maxLives: 3
+                });
+
                 return <InputManager>
-                    <GameUI game={this.getGame()} />
+                    <GameUI game={game} />
                 </InputManager>;
             case Screens.MULTIPLAYER_GAME:
                 return <InputManager>
-                    <GameUI game={this.getGame()} />
+                    <NetworkGameUI />
                 </InputManager>
             default:
                 return null
         }
     };
-
-    getGame = () => {
-        const gameConfig: GameConfigT = {
-            numberOfStars: 100,
-            screenWidth: window.innerWidth,
-            screenHeight: window.innerHeight,
-            baseScore: 50,
-            variableScoreMin: 1,
-            variableScoreMax: 50,
-            maxLives: 3
-        }
-
-        const { multiPlayer } = this.props;
-
-        return new NetworkGame(gameConfig, 'http://localhost:5000', '', multiPlayer.playerName);
-    }
 
     render() {
         const { screen, fps } = this.props;
@@ -68,7 +62,6 @@ const mapStateToProps = (state) => {
     return {
         screen: state.screen,
         fps: state.fps,
-        multiPlayer: state.multiPlayer
     }
 };
 

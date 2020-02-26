@@ -27,6 +27,7 @@ class Entity extends Drawable {
     }
 
     positionCenterOf(width: Number, height: Number): void {
+        console.log("POS", width, height);
         this.position.x = width / 2;
         this.position.y = height / 2;
     }

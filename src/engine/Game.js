@@ -1,7 +1,7 @@
 import Player from "./entities/entity/Player";
 import Background from "./entities/entity/Background";
 import Asteroid, { generateAsteroidField } from "./entities/entity/Asteroid";
-import { numberBetween } from "../util/helpers";
+import { numberBetween, getRandomColor } from "../util/helpers";
 
 export type GameConfigT = {
     numberOfStars: Number,
@@ -33,6 +33,7 @@ export default class Game {
         this.level = 1;
         this.initialized = false;
         this.player.positionCenterOf(this.screenWidth, this.screenHeight);
+        this.player.setColor(getRandomColor());
         this.update();
     }
 
@@ -113,7 +114,7 @@ export default class Game {
     }
 
     initializeLevel() {
-        const baseAsteroidFieldSize = 1;
+        const baseAsteroidFieldSize = 5;
         const asteroidFieldSize = numberBetween(1, this.level) + baseAsteroidFieldSize;
         const asteroidField = generateAsteroidField(asteroidFieldSize, this.screenWidth, this.screenHeight);
 
