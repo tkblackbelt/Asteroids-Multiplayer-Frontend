@@ -17,16 +17,16 @@ module.exports = merge(common, {
         },
         proxy: {
             '/socket': {
-                target: 'http://localhost:5000',
+                target: 'http://15.222.46.12:5000',
                 secure: false,
                 changeOrigin: true,
                 ws: true
             },
-            '/**': {
-                target: 'https://zgn8c4rya7.execute-api.ca-central-1.amazonaws.com/Prod',
-                secure: false,
-                changeOrigin: true
-            },
+            // '/**': {
+            //     target: 'https://zgn8c4rya7.execute-api.ca-central-1.amazonaws.com/Prod',
+            //     secure: false,
+            //     changeOrigin: true
+            // },
            
         }
     }

@@ -16,6 +16,7 @@ class Client {
 
     connect(host: String): void {
         this.socket = io(host)
+        console.log("CONNECTING TO ", host);
         this.socket.on('connect', this.onConnect);
         this.socket.on('disconnect', this.onDisconnect);
         this.socket.on('data', this.onDataReceved);
