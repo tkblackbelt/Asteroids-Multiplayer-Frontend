@@ -20,7 +20,7 @@ class App extends React.Component {
     }
 
     getScreen = (screen) => {
-        // // const s = new NetworkGame('http://15.222.46.12:5000/');
+        // const s = new NetworkGame('GameServerApplicationLB-1541062293.ca-central-1.elb.amazonaws.com/socket');
         // s.joinGame('123', '123', '123');
         switch (screen) {
             case Screens.MAIN_MENU:

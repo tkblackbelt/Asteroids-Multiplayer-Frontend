@@ -22,11 +22,11 @@ module.exports = merge(common, {
                 changeOrigin: true,
                 ws: true
             },
-            // '/**': {
-            //     target: 'https://zgn8c4rya7.execute-api.ca-central-1.amazonaws.com/Prod',
-            //     secure: false,
-            //     changeOrigin: true
-            // },
+            '/**': {
+                target: 'https://gf1azvydvi.execute-api.ca-central-1.amazonaws.com/Prod',
+                secure: false,
+                changeOrigin: true
+            },
            
         }
     }
