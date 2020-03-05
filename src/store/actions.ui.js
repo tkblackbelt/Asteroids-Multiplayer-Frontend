@@ -6,7 +6,7 @@ export const JOIN_MULTIPLAYER_GAMEROOM = 'JOIN_MULTIPLAYER_ROOM';
 export const OPEN_HIGH_SCORES = 'OPEN_HIGH_SCORES';
 export const CLOSE_HIGH_SCORES = 'CLOSE_HIGH_SCORES';
 
-const API = 'https://gf1azvydvi.execute-api.ca-central-1.amazonaws.com/Prod';
+const API = 'https://api.chuckbenger.com/v1';
 
 export const Screens = Object.freeze({
     MAIN_MENU: Symbol("main_menu"),

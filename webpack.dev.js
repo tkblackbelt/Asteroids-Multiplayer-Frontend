@@ -23,7 +23,7 @@ module.exports = merge(common, {
                 ws: true
             },
             '/**': {
-                target: 'https://gf1azvydvi.execute-api.ca-central-1.amazonaws.com/Prod',
+                target: 'https://api.chuckbenger.com/v1/',
                 secure: false,
                 changeOrigin: true
             },

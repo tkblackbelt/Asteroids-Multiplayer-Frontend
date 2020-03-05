@@ -16,7 +16,7 @@ class NetworkGameUI extends React.Component {
 
     componentWillMount() {
         this.setState({
-            game: new NetworkGame('GameServerApplicationLB-1541062293.ca-central-1.elb.amazonaws.com/socket', this.onPlayersUpdated)
+            game: new NetworkGame('https://socket.chuckbenger.com/socket', this.onPlayersUpdated)
         });
     }
 
