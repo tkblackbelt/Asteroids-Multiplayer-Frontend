@@ -11,7 +11,7 @@ const API_URL = {
 
 const SOCKET_URL = {
     production: JSON.stringify('https://socket.chuckbenger.com/socket'),
-    development: JSON.stringify('/socket')
+    development: JSON.stringify('https://socket.chuckbenger.com/socket')
 }
 
 var environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
