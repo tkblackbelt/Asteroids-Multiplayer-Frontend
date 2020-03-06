@@ -16,7 +16,7 @@ class NetworkGameUI extends React.Component {
 
     componentWillMount() {
         this.setState({
-            game: new NetworkGame('https://socket.chuckbenger.com/socket', this.onPlayersUpdated)
+            game: new NetworkGame(SOCKET_URL, this.onPlayersUpdated)
         });
     }
 
@@ -48,7 +48,7 @@ class NetworkGameUI extends React.Component {
         if (!waitingForGame && gameID && playerID && game) {
             game.joinGame(gameID, playerName, playerID);
         }
-       
+
         if (!game || waitingForGame || !game.isInitialized()) {
             return (
                 <WaitingForPlayers playerID={playerID} />

@@ -3,10 +3,8 @@ import axios from 'axios'
 export const SET_SCREEN = 'SET_SCREEN';
 export const START_MULTIPLAYER = 'START_MULTIPLAYER';
 export const JOIN_MULTIPLAYER_GAMEROOM = 'JOIN_MULTIPLAYER_ROOM';
-export const OPEN_HIGH_SCORES = 'OPEN_HIGH_SCORES';
-export const CLOSE_HIGH_SCORES = 'CLOSE_HIGH_SCORES';
 
-const API = 'https://api.chuckbenger.com/v1';
+const API = API_URL;
 
 export const Screens = Object.freeze({
     MAIN_MENU: Symbol("main_menu"),
@@ -26,12 +24,14 @@ export function checkForGameStart(playerID: String) {
         return (dispatch) => {
             axios.get(`${API}/game/${playerID}`)
                 .then(response => {
-                    dispatch({
-                        type: JOIN_MULTIPLAYER_GAMEROOM,
-                        payload: {
-                            gameID: response.data.game_id
-                        }
-                    })
+                    if (response.data.game_id) {
+                        dispatch({
+                            type: JOIN_MULTIPLAYER_GAMEROOM,
+                            payload: {
+                                gameID: response.data.game_id
+                            }
+                        })
+                    }
                 })
                 .catch(error => {
                     console.log(error);
@@ -65,17 +65,5 @@ export function startMainMenu() {
     return {
         type: SET_SCREEN,
         payload: Screens.MAIN_MENU
-    };
-}
-
-export function openHighScores() {
-    return {
-        type: OPEN_HIGH_SCORES
-    };
-}
-
-export function closeHighScores() {
-    return {
-        type: CLOSE_HIGH_SCORES
     };
 }

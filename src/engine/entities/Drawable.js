@@ -1,3 +1,5 @@
+import { RESOLUTION } from "../../components/Canvas";
+
 class Drawable {
 
     constructor() {
@@ -11,6 +13,7 @@ class Drawable {
     draw(ctx: CanvasRenderingContext2D): void {
         ctx.restore();
         ctx.save();
+        ctx.setTransform(RESOLUTION.width / this.screenWidth, 0, 0, RESOLUTION.height / this.screenHeight, 0, 0);
     }
 
     /**

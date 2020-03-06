@@ -1,6 +1,4 @@
 import {
-    CLOSE_HIGH_SCORES,
-    OPEN_HIGH_SCORES,
     Screens,
     SET_SCREEN,
     START_MULTIPLAYER,
@@ -9,14 +7,6 @@ import {
 
 const initialState = {
     screen: Screens.MAIN_MENU,
-    highScores: {
-        open: false,
-        scores: [
-            { user: 'Bob', score: 99999 },
-            { user: 'Jim', score: 88888 },
-            { user: 'Chuck', score: 10000 },
-        ]
-    },
     multiPlayer: {
         playerName: "",
         playerID: null,
@@ -26,16 +16,6 @@ const initialState = {
     fps: 60
 };
 
-
-function updateHighScores(state, changes) {
-    return {
-        ...state,
-        highScores: {
-            ...state.highScores,
-            ...changes
-        }
-    }
-}
 
 export function AsteroidsGame(state = initialState, action) {
     switch (action.type) {
@@ -75,10 +55,6 @@ export function AsteroidsGame(state = initialState, action) {
                     waitingForGame: false
                 }
             }
-        case OPEN_HIGH_SCORES:
-            return updateHighScores(state, { open: true });
-        case CLOSE_HIGH_SCORES:
-            return updateHighScores(state, { open: false });
         default:
             return state;
     }

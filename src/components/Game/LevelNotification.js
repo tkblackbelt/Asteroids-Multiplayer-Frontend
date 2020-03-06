@@ -12,6 +12,7 @@ class LevelNotification extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {   
         if (this.props.open !== prevProps.open) {
+            console.log("UPDATING!!");
             this.setState({
                 open: true,
                 countDownSeconds: this.state.notificationTimeoutSeconds,

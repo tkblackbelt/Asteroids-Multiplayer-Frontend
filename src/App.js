@@ -2,7 +2,7 @@ import React from 'react';
 import GameUI from "./components/Game/GameUI";
 import WindowManager from "./engine/manager/WindowManager";
 import MainMenu from "./components/MainMenu/MainMenu";
-import Canvas from "./components/Canvas";
+import Canvas, { RESOLUTION } from "./components/Canvas";
 
 import './App.css';
 import InputManager from "./engine/manager/InputManager";
@@ -20,16 +20,16 @@ class App extends React.Component {
     }
 
     getScreen = (screen) => {
-        const s = new NetworkGame('https://socket.chuckbenger.com/socket');
-        s.joinGame('123', '123', '123');
+        // const s = new NetworkGame('/socket');
+        // s.joinGame('123', '123', '123');
         switch (screen) {
             case Screens.MAIN_MENU:
                 return <MainMenu />;
             case Screens.GAME:
                 const game = new Game({
                     numberOfStars: 100,
-                    screenWidth: window.innerWidth,
-                    screenHeight: window.innerHeight,
+                    screenWidth: RESOLUTION.width,
+                    screenHeight: RESOLUTION.height,
                     baseScore: 100,
                     variableScoreMin: 1,
                     variableScoreMax: 50,
@@ -63,7 +63,7 @@ class App extends React.Component {
 const mapStateToProps = (state) => {
     return {
         screen: state.screen,
-        fps: state.fps,
+        fps: state.fps
     }
 };
 

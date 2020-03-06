@@ -1,6 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+export const RESOLUTION = {
+    width: 1024,
+    height: 1024
+}
+
 class Canvas extends React.Component {
 
     constructor(props) {
@@ -20,10 +25,14 @@ class Canvas extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const {screenWidth, screenHeight} = this.props;
+        const { screenWidth, screenHeight } = this.props;
+        this.refs.canvas.width = RESOLUTION.width;
+        this.refs.canvas.height = RESOLUTION.height;
+        this.refs.canvas.style.width = `${screenWidth}px`;
+        this.refs.canvas.style.height = `${screenHeight}px`;
 
-        this.refs.canvas.width = screenWidth;
-        this.refs.canvas.height = screenHeight;
+        // this.refs.canvas.width = screenWidth;
+        // this.refs.canvas.height = screenHeight;
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext): boolean {
@@ -42,8 +51,8 @@ class Canvas extends React.Component {
     render() {
         return (
             <React.Fragment>
-                <canvas ref="canvas"/>
-                <div style={{position: 'fixed', top: 0}}>
+                <canvas ref="canvas" />
+                <div style={{ position: 'fixed', top: 0 }}>
                     {React.cloneElement(this.props.children, this.getChildrenProps())}
                 </div>
             </React.Fragment>
@@ -51,11 +60,13 @@ class Canvas extends React.Component {
     }
 
     getChildrenProps = () => {
-        const props = {...this.props};
+        const props = { ...this.props };
         delete props['children'];
 
         return {
             ...props,
+            screenWidth: RESOLUTION.width,
+            screenHeight: RESOLUTION.height,
             context: this.state.context,
             canDraw: this.canDraw
         };
@@ -85,6 +96,7 @@ class Canvas extends React.Component {
 
 Canvas.propTypes = {
     fps: PropTypes.number,
+
     screenWidth: PropTypes.number,
     screenHeight: PropTypes.number,
     children: PropTypes.object

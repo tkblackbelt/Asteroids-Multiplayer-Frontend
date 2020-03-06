@@ -1,7 +1,20 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin'); //installed via npm
 const webpackDashboard = require('webpack-dashboard/plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const webpack = require('webpack');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+const API_URL = {
+    production: JSON.stringify('https://api.chuckbenger.com/v1'),
+    development: JSON.stringify('https://api.chuckbenger.com/v1')
+}
+
+const SOCKET_URL = {
+    production: JSON.stringify('https://socket.chuckbenger.com/socket'),
+    development: JSON.stringify('/socket')
+}
+
+var environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
 module.exports = {
     entry: './src/index.js',
@@ -62,12 +75,16 @@ module.exports = {
     },
 
     plugins: [
-        new HtmlWebpackPlugin({template: './src/index.html'}),
+        new HtmlWebpackPlugin({ template: './src/index.html' }),
         new webpackDashboard(),
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             template: "./src/index.html"
         }),
+        new webpack.DefinePlugin({
+            'API_URL': API_URL[environment],
+            'SOCKET_URL': SOCKET_URL[environment]
+        })
     ],
 
 };

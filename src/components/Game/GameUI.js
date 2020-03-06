@@ -37,8 +37,11 @@ class GameUI extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const { screenWidth, screenHeight, game } = this.props;
-
+        
         game.setScreenSize(screenWidth, screenHeight);
+        if (!game.isInitialized()) {
+            this.initializeLevel();
+        }
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -48,7 +51,8 @@ class GameUI extends React.Component {
             this.state.levelCountDownOpen !== nextState.levelCountDownOpen ||
             this.state.forceRender !== nextState.forceRender ||
             this.state.levelCompleteDialogOpen !== nextState.levelCompleteDialogOpen ||
-            this.state.gameOverDialogOpen !== nextState.gameOverDialogOpen;
+            this.state.gameOverDialogOpen !== nextState.gameOverDialogOpen ||
+            !this.props.game.isInitialized()
     }
 
     initializeLevel() {
@@ -200,7 +204,7 @@ class GameUI extends React.Component {
         const { game } = this.props;
 
         game.advanceLevel();
-        this.initializeLevel();
+        this.forceRender();
         this.closeDialogs();
     }
 

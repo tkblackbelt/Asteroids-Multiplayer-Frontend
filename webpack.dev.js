@@ -17,7 +17,7 @@ module.exports = merge(common, {
         },
         proxy: {
             '/socket': {
-                target: 'http://15.222.46.12:5000',
+                target: 'http://0.0.0.0:5000',
                 secure: false,
                 changeOrigin: true,
                 ws: true

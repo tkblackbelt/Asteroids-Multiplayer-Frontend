@@ -21,7 +21,6 @@ class WaitingForPlayers extends React.Component {
 
     componentDidMount = () => {
         const loop = setInterval(() => {
-            console.log("POLLING", this.props);
             this.props.checkForGameStart(this.props.playerID);
         }, 5000);
 

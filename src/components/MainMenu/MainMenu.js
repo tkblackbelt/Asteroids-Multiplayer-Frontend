@@ -6,7 +6,7 @@ import { generateAsteroidField } from "../../engine/entities/entity/Asteroid";
 import { closeHighScores, openHighScores, startSinglePlayerGame, startMultiPlayerGame } from "../../store/actions.ui";
 import { connect } from "react-redux";
 import Button from "../common/Button";
-import { HighScores } from "./HighScores";
+import About from './About';
 import Client from '../../engine/network/Client';
 import QuestionInput from '../common/QuestionInput';
 
@@ -16,7 +16,6 @@ const style = {
         display: 'flex',
         flexDirection: 'column',
         placeItems: 'center',
-        multiplayerDialogOpen: false
     }
 };
 
@@ -25,7 +24,9 @@ class MainMenu extends React.Component {
     state = {
         background: new Background(150),
         asteroids: [],
-        animationId: 0
+        animationId: 0,
+        multiplayerDialogOpen: false,
+        aboutDialogOpen: false
     };
 
     shouldComponentUpdate(nextProps, nextState, nextContext): boolean {
@@ -33,7 +34,8 @@ class MainMenu extends React.Component {
             this.props.screenWidth !== nextProps.screenWidth ||
             this.state.asteroids.length === 0 ||
             this.props.highScores !== nextProps.highScores ||
-            this.state.multiplayerDialogOpen !== nextState.multiplayerDialogOpen;
+            this.state.multiplayerDialogOpen !== nextState.multiplayerDialogOpen ||
+            this.state.aboutDialogOpen !== nextState.aboutDialogOpen;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -60,9 +62,9 @@ class MainMenu extends React.Component {
             this.update();
             this.draw();
         }
-
+        // this.state.animationId = window.requestAnimationFrame(this.gameLoop);
         this.setState({
-            animationId: window.requestAnimationFrame(this.gameLoop)
+            animationId:  window.requestAnimationFrame(this.gameLoop)
         })
     };
 
@@ -96,14 +98,26 @@ class MainMenu extends React.Component {
         });
     }
 
+    onAboutDialogOpen = () => {
+        this.setState({
+            aboutDialogOpen: true
+        })
+    }
+
+    closeAboutDialog = () => {
+        this.setState({
+            aboutDialogOpen: false
+        });
+    }
+
     render() {
-        const { highScores, openHighScores, closeHighScores, startMultiPlayerGame } = this.props;
-        const { multiplayerDialogOpen } = this.state;
+        const { highScores, startMultiPlayerGame } = this.props;
+        const { multiplayerDialogOpen, aboutDialogOpen } = this.state;
 
         return (
             <div className="ui-root">
                 <MainMenuTitle mainText="ASTEROIDS" subText="ONLINE" />
-                <HighScores open={highScores.open} scores={highScores.scores} onClose={closeHighScores} />
+                <About open={aboutDialogOpen} onClose={this.closeAboutDialog} />
                 {multiplayerDialogOpen &&
                     <QuestionInput
                         text="Enter matchmaking?"
@@ -113,7 +127,7 @@ class MainMenu extends React.Component {
                 <div className="ui-container" style={style.buttons}>
                     <Button text="Single Player" onClick={this.props.startSinglePlayerGame} />
                     <Button text="Multi-Player" onClick={this.onMultiPlayerDialogOpen} />
-                    <Button text="Leader Board" onClick={openHighScores} />
+                    <Button text="About" onClick={this.onAboutDialogOpen} />
                 </div>
             </div>
         );
@@ -127,12 +141,6 @@ const mapDispatchToProps = dispatch => {
         },
         startMultiPlayerGame: (playerName: String) => {
             dispatch(startMultiPlayerGame(playerName))
-        },
-        closeHighScores: () => {
-            dispatch(closeHighScores());
-        },
-        openHighScores: () => {
-            dispatch(openHighScores());
         }
     }
 };
