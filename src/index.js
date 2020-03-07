@@ -1,17 +1,25 @@
 import App from "./App";
 import React from "react";
 import ReactDOM from 'react-dom';
-import {applyMiddleware, createStore} from "redux";
-import {AsteroidsGame} from "./store/reducer.ui";
-import {Provider} from "react-redux";
+import { applyMiddleware, createStore } from "redux";
+import { AsteroidsGame } from "./store/reducer.ui";
+import { Provider } from "react-redux";
 import logger from 'redux-logger'
 import ReduxThunk from 'redux-thunk';
 
+let middleware = null;
+
+if (ENVIRONMENT === 'production') {
+    middleware = applyMiddleware(ReduxThunk);
+} else {
+    middleware = applyMiddleware(logger, ReduxThunk);
+}
+
 const store = createStore(
     AsteroidsGame,
-    applyMiddleware(logger, ReduxThunk)
+    middleware
 );
 
 ReactDOM.render(<Provider store={store}>
-    <App/>
+    <App />
 </Provider>, document.getElementById('root'));

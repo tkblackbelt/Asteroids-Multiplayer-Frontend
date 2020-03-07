@@ -4,7 +4,7 @@
   "description": "Web Asteroids Clone with online multi-player and match making",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.prod.js",
+    "build": "env NODE_ENV=production webpack --config webpack.prod.js",
     "start": "webpack-dashboard -- webpack-dev-server src/index.js --config webpack.dev.js"
   },
   "repository": {

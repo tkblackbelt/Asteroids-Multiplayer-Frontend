@@ -15,7 +15,7 @@ const SOCKET_URL = {
 }
 
 var environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-
+console.log("ENVIRONMNET = ", environment);
 module.exports = {
     entry: './src/index.js',
     output: {
@@ -83,7 +83,8 @@ module.exports = {
         }),
         new webpack.DefinePlugin({
             'API_URL': API_URL[environment],
-            'SOCKET_URL': SOCKET_URL[environment]
+            'SOCKET_URL': SOCKET_URL[environment],
+            'ENVIRONMENT': environment
         })
     ],
 
