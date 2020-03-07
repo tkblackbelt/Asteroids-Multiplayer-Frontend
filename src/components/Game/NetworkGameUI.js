@@ -11,13 +11,32 @@ class NetworkGameUI extends React.Component {
 
     state = {
         forceRender: false,
-        game: null
+        game: null,
+        gameJoinLoop: null
     }
 
     componentWillMount() {
         this.setState({
             game: new NetworkGame(SOCKET_URL, this.onPlayersUpdated)
         });
+    }
+
+    componentDidUpdate() {
+        console.log("UPDATING");
+
+        const { waitingForGame } = this.props;
+        const { gameID, playerID, playerName } = this.props.multiPlayer;
+        const game = this.getGame();
+
+        if (!waitingForGame && gameID && playerID && game) {
+            game.joinGame(gameID, playerName, playerID);
+        }
+
+        if (this.isWaitingForGame()) {
+            this.startGameJoinLoop();
+        } else {
+            this.stopGameJoinLoop();
+        }
     }
 
     getTeammates = () => {
@@ -32,6 +51,34 @@ class NetworkGameUI extends React.Component {
         this.setState({ forceRender: !this.state.forceRender });
     }
 
+    startGameJoinLoop = () => {
+        if (!this.state.gameJoinLoop) {
+            const loop = setInterval(() => {
+                this.getGame().sendPlayerJoinPacket()
+            }, 5000);
+
+            this.setState({
+                gameJoinLoop: loop
+            })
+        }
+    }
+
+    stopGameJoinLoop = () => {
+        if (this.state.gameJoinLoop) {
+            clearTimeout(this.state.gameJoinLoop);
+            this.setState({
+                gameJoinLoop: null
+            })
+        }
+    }
+
+    isWaitingForGame = () => {
+        const { waitingForGame } = this.props;
+        const game = this.getGame();
+
+        return !game || waitingForGame || !game.isInitialized();
+    }
+
     render() {
         return (
             <React.Fragment>
@@ -41,15 +88,12 @@ class NetworkGameUI extends React.Component {
     }
 
     renderScene() {
+        console.log("RENDERING SCENE");
         const { waitingForGame } = this.props;
-        const { gameID, playerID, playerName } = this.props.multiPlayer;
+        const { playerID } = this.props.multiPlayer;
         const game = this.getGame();
 
-        if (!waitingForGame && gameID && playerID && game) {
-            game.joinGame(gameID, playerName, playerID);
-        }
-
-        if (!game || waitingForGame || !game.isInitialized()) {
+        if (this.isWaitingForGame()) {
             return (
                 <WaitingForPlayers playerID={playerID} />
             )

@@ -66,6 +66,12 @@ class NetworkGame extends Game {
         this.client.sendPacket(new PlayerBlastPacket(this.client.getPlayerID()));
     }
 
+    sendPlayerJoinPacket(): void {
+        if (this.client) {
+            this.client.sendJoinGamePacket();
+        }
+    }
+
     exit(): void {
         this.client.disconnect();
         // alert("BYE");

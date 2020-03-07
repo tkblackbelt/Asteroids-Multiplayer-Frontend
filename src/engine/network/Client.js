@@ -37,8 +37,7 @@ class Client {
     onConnect = () => {
         console.log(`Connected to game server gameID: ${this.gameID}`);
 
-        this.sendPacket(new GameJoinPacket(this.playerID, this.gameID,
-            this.player.getName(), this.player.getColor()), 'join');
+        this.sendJoinGamePacket();
     }
 
     onDisconnect = () => {
@@ -51,6 +50,11 @@ class Client {
         const packet = decode(data);
         this.handlePacket(packet);
 
+    }
+
+    sendJoinGamePacket = () => {
+        this.sendPacket(new GameJoinPacket(this.playerID, this.gameID,
+            this.player.getName(), this.player.getColor()), 'join');
     }
 
     /**
