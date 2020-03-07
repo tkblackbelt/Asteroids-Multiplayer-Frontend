@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "env NODE_ENV=production webpack --config webpack.prod.js",
-    "start": "webpack-dashboard -- webpack-dev-server src/index.js --config webpack.dev.js"
+    "start": "env NODE_ENV=development webpack-dashboard -- webpack-dev-server src/index.js --config webpack.dev.js"
   },
   "repository": {
     "type": "git",

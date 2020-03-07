@@ -9,7 +9,7 @@ import ReduxThunk from 'redux-thunk';
 
 let middleware = null;
 
-if (ENVIRONMENT === 'production') {
+if (ENV === 'production') {
     middleware = applyMiddleware(ReduxThunk);
 } else {
     middleware = applyMiddleware(logger, ReduxThunk);
