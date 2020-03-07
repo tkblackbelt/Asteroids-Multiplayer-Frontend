@@ -5,6 +5,7 @@ import MainMenu from "./components/MainMenu/MainMenu";
 import Canvas, { RESOLUTION } from "./components/Canvas";
 
 import './App.css';
+import './static/img/favicon.png';
 import InputManager from "./engine/manager/InputManager";
 import { connect } from "react-redux";
 import { Screens } from "./store/actions.ui";

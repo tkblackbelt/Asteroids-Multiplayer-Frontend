@@ -129,6 +129,12 @@ class MainMenu extends React.Component {
                     <Button text="Multi-Player" onClick={this.onMultiPlayerDialogOpen} />
                     <Button text="About" onClick={this.onAboutDialogOpen} />
                 </div>
+                <div className="ui-container">
+                    <h4>Controls</h4>
+                    <h4>Movement: A(Left) D(Right)</h4>
+                    <h4>Thrust: W</h4>
+                    <h4>Shoot: Space</h4>
+                </div>
             </div>
         );
     }
