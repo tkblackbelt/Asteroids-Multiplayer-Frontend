@@ -28,7 +28,7 @@ class App extends React.Component {
                 return <MainMenu />;
             case Screens.GAME:
                 const game = new Game({
-                    numberOfStars: 100,
+                    numberOfStars: 50,
                     screenWidth: RESOLUTION.width,
                     screenHeight: RESOLUTION.height,
                     baseScore: 100,

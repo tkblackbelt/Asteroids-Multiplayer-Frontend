@@ -23,6 +23,7 @@ export default class InputManager extends React.Component {
     }
 
     render() {
+        console.log("INPUT RENDER");
         return (
             <React.Fragment>
                 {React.cloneElement(this.props.children, this.getChildrenProps())}

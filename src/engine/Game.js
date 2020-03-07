@@ -104,9 +104,11 @@ export default class Game {
     }
 
     reset() {
+        this.player.setScore(0);
         this.player.setLives(this.maxLives);
         this.player.respawn();
         this.level = 1;
+        
     }
 
     exit() {

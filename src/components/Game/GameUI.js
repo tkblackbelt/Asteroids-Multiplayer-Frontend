@@ -157,6 +157,7 @@ class GameUI extends React.Component {
     };
 
     render() {
+        console.log("GAME RENDER");
         return <div style={{ zIndex: 9999 }}>
             {this.renderStats()}
             {this.renderLevelNotification()}
@@ -204,7 +205,7 @@ class GameUI extends React.Component {
         const { game } = this.props;
 
         game.advanceLevel();
-        this.forceRender();
+        this.initializeLevel();
         this.closeDialogs();
     }
 

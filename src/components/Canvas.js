@@ -49,6 +49,7 @@ class Canvas extends React.Component {
     }
 
     render() {
+        console.log("CANVAS RENDER");
         return (
             <React.Fragment>
                 <canvas ref="canvas" />
@@ -88,9 +89,10 @@ class Canvas extends React.Component {
     };
 
     setNextAllowedUpdate = () => {
-        this.setState({
-            lastUpdate: Date.now() - (this.timeSinceLastUpdate() % this.state.fpsInterval)
-        });
+        this.lastUpdate = Date.now() - (this.timeSinceLastUpdate() % this.state.fpsInterval);
+        // this.setState({
+        //     lastUpdate: Date.now() - (this.timeSinceLastUpdate() % this.state.fpsInterval)
+        // });
     }
 }
 

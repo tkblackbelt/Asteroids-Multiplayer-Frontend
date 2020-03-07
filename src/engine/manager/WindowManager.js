@@ -25,6 +25,7 @@ class WindowManager extends React.Component {
     };
 
     render() {
+        console.log("WINDOW RENDER");
         return (
             <div style={{
                 width: `${this.state.width}px`,

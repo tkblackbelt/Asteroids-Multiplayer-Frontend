@@ -14,12 +14,13 @@ import Player from './entities/entity/Player';
 import Asteroid from './entities/entity/Asteroid';
 import AsteroidKilledPacket from './network/packets/AsteroidKilledPacket';
 import PlayerRespawnPacket from './network/packets/PlayerRespawnPacket';
+import { RESOLUTION } from '../components/Canvas';
 
 
 const gameConfig: GameConfigT = {
-    numberOfStars: 100,
-    screenWidth: window.innerWidth,
-    screenHeight: window.innerHeight,
+    numberOfStars: 50,
+    screenWidth: RESOLUTION.width,
+    screenHeight: RESOLUTION.height,
     baseScore: 100,
     variableScoreMin: 0,
     variableScoreMax: 0,
