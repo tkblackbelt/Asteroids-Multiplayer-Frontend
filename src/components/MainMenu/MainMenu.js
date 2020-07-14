@@ -87,15 +87,16 @@ class MainMenu extends React.Component {
     };
 
     onMultiPlayerDialogOpen = () => {
-        this.setState({
-            multiplayerDialogOpen: true
-        })
+        alert("Apologies. Multi-player disabled since AWS Fargate and ELB gets pricey :). Feel free to checkout the code in the About Button though");
+        //this.setState({
+          //  multiplayerDialogOpen: true
+        //})
     }
 
     closeMultiPlayerDialog = () => {
-        this.setState({
-            multiplayerDialogOpen: false
-        });
+       // this.setState({
+         //   multiplayerDialogOpen: false
+        //});
     }
 
     onAboutDialogOpen = () => {
